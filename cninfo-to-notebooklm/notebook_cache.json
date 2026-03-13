@@ -1,0 +1,22 @@
+{
+  "stocks": {
+    "002415": {
+      "stock_name": "海康威视",
+      "notebook_id": "19e7ca17-cd1f-4edc-b84d-ece4d2c751b8",
+      "notebook_title": "海康威视 财务报告",
+      "updated_at": "2026-03-13 22:26:24"
+    },
+    "000708": {
+      "stock_name": "中信特钢",
+      "notebook_id": "0dd6d80c-d30d-4258-bdb7-ac8fdf1fc0b6",
+      "notebook_title": "中信特钢 财务报告",
+      "updated_at": "2026-03-13 22:46:34"
+    },
+    "600036": {
+      "stock_name": "招商银行",
+      "notebook_id": "f6847417-dcee-4015-bed7-c3de1cd90567",
+      "notebook_title": "招商银行 财务报告",
+      "updated_at": "2026-03-13 23:15:54"
+    }
+  }
+}
