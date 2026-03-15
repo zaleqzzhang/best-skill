@@ -17,6 +17,30 @@
       "notebook_id": "f6847417-dcee-4015-bed7-c3de1cd90567",
       "notebook_title": "招商银行 财务报告",
       "updated_at": "2026-03-13 23:15:54"
+    },
+    "003816": {
+      "stock_name": "中国广核",
+      "notebook_id": "57ba1d1b-6940-4668-a3cc-2bccc4655d54",
+      "notebook_title": "中国广核 财务报告",
+      "updated_at": "2026-03-15 22:40:00"
+    },
+    "600795": {
+      "stock_name": "国电电力",
+      "notebook_id": "75809686-1fb5-45d2-a2ce-46d1231b62",
+      "notebook_title": "国电电力 财务报告",
+      "updated_at": "2026-03-15 22:51:05"
+    },
+    "600900": {
+      "stock_name": "长江电力",
+      "notebook_id": "b4722d88-2af1-4fe0-9a06-b7d30f4854",
+      "notebook_title": "长江电力 财务报告",
+      "updated_at": "2026-03-15 23:07:15"
+    },
+    "600459": {
+      "stock_name": "贵研铂业",
+      "notebook_id": "6da2e7c7-c8d7-4386-8d1e-413185fe5f86",
+      "notebook_title": "贵研铂业 财务报告",
+      "updated_at": "2026-03-15 23:11:22"
     }
   }
 }

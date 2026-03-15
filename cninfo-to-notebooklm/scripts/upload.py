@@ -107,20 +107,69 @@ def create_notebook(title: str) -> str:
     print(f"⚠️ Output: {output}")
     return output.strip().split()[-1] if output.strip() else None
 
+def find_existing_notebook(notebook_title: str) -> str:
+    """Search for existing notebook by title in NotebookLM"""
+    success, output = run_notebooklm_command(["list"])
+    if not success:
+        return None
+    
+    # Parse output to find matching notebook
+    # Output format is a table with columns: ID, Title, Owner, Created
+    # Data lines look like: │ 57ba1d1b-6940-4668-a3cc-2bccc4655d… │ 中国广核 财务报告 │ Owner │ 2026-03-15 │
+    # Note: The ID column may be truncated (ends with …)
+    for line in output.split("\n"):
+        line = line.strip()
+        # Skip empty lines
+        if not line:
+            continue
+        # Skip header line (contains "ID" and "Title" as column headers)
+        if "ID" in line and "Title" in line:
+            continue
+        # Skip separator lines (box drawing characters without data)
+        # Data lines start with '│' and contain UUID
+        if not line.startswith("│"):
+            continue
+        
+        # Check if this line contains the notebook title
+        if notebook_title in line:
+            # Extract notebook ID from the first column (may be truncated)
+            # ID format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx (possibly truncated)
+            # Match the first column after '│' and before the next '│'
+            parts = line.split("│")
+            if len(parts) >= 2:
+                id_part = parts[1].strip()
+                # Remove trailing … if present
+                if id_part.endswith("…"):
+                    id_part = id_part[:-1]
+                # Validate it looks like a UUID prefix
+                if re.match(r"^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}", id_part):
+                    print(f"🔍 Found existing notebook in NotebookLM: {id_part}...")
+                    return id_part
+    
+    return None
+
 def get_or_create_notebook(stock_code: str, stock_name: str, force_new: bool = False) -> str:
     """Get existing notebook or create new one for a stock"""
-    # Check cache first
+    notebook_title = f"{stock_name} 财务报告"
+    
+    # 1. Check cache first
     if not force_new:
         cached_id = _get_cached_notebook(stock_code)
         if cached_id:
             print(f"📋 Found cached notebook for {stock_code}: {cached_id}")
-            # Try to use the notebook - assume it exists even if verification fails
-            # (NotebookLM API can be flaky)
             print(f"✅ Using cached notebook: {cached_id}")
             return cached_id
     
-    # Create new notebook
-    notebook_title = f"{stock_name} 财务报告"
+    # 2. Search for existing notebook in NotebookLM
+    if not force_new:
+        existing_id = find_existing_notebook(notebook_title)
+        if existing_id:
+            print(f"✅ Using existing notebook: {existing_id}")
+            _cache_notebook(stock_code, stock_name, existing_id, notebook_title)
+            return existing_id
+    
+    # 3. Create new notebook
+    print(f"📚 Creating new notebook: {notebook_title}")
     notebook_id = create_notebook(notebook_title)
     
     if notebook_id:
