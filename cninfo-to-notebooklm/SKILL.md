@@ -31,7 +31,7 @@ User provides stock name/code
 1. Look up stock in database (auto-detect market)
         ↓
 2. Download reports from cninfo:
-   - Last 5 years annual reports (年度报告)
+   - Last 10 years annual reports (年度报告)
    - Current year: Q1, semi-annual, Q3 reports
         ↓
 3. Create NotebookLM notebook
@@ -42,6 +42,14 @@ User provides stock name/code
         ↓
 6. Return notebook ID ✅
 ```
+
+## Script Responsibilities
+
+| Script | Responsibility |
+| :--- | :--- |
+| `download.py` | Download reports from cninfo.com.cn |
+| `upload.py` | Upload PDFs to NotebookLM |
+| `run.py` | Orchestrate: download → create notebook → upload → cleanup |
 
 ## Step-by-Step Instructions
 
@@ -75,7 +83,7 @@ Examples:
 
 This script handles everything:
 
-1. Downloads reports to a temp directory.
+1. Downloads reports to a temp directory (last 10 years annual + current periodic).
 2. Creates a NotebookLM notebook.
 3. Configures the notebook with `assets/financial_analyst_prompt.txt`.
 4. Uploads all PDFs.
@@ -119,7 +127,7 @@ This prompt configures NotebookLM to act as a "Financial Report Analyst" based o
 
 | Report Type | Category Code | Period |
 | :--- | :--- | :--- |
-| Annual | `category_ndbg_szsh` | Previous 5 years |
+| Annual | `category_ndbg_szsh` | Previous 10 years |
 | Semi-Annual | `category_bndbg_szsh` | Current year |
 | Q1 Report | `category_yjdbg_szsh` | Current year |
 | Q3 Report | `category_sjdbg_szsh` | Current year |
@@ -128,8 +136,21 @@ This prompt configures NotebookLM to act as a "Financial Report Analyst" based o
 
 | Aspect | A-share | Hong Kong |
 | :--- | :--- | :--- |
-| Market code | `szse` | `hke` |
-| Categories | Uses category codes | Empty categories |
-| Search key | Uses Chinese search terms | Empty search key |
-| Report naming | `YYYY年年度报告` | May use Arabic/Chinese numerals |
-| Search period | Following year (March-June) | Same year or following year |
+| Market code | `szse`/`sse` | `hke` |
+| API Method | Category-based filtering | Keyword search API |
+| Search key | Uses category codes | Uses stock code + "年报" search |
+| Report naming | `YYYY年年度报告` | `年报`, `年度报告`, `财务年度报告` |
+| Data availability | Full history | May have limited history |
+
+### Hong Kong Stock API Details
+
+Hong Kong stocks use a different API approach:
+
+1. **Search URL**: `https://www.cninfo.com.cn/new/commonUrl?url=disclosure/list/notice#hke%2F1_hkeMain`
+2. **Search Method**: Keyword search with stock code (e.g., "00700 年报")
+3. **Report Patterns**: 
+   - 年报 (e.g., "2024 年报")
+   - 财务年度报告 (e.g., "2024财务年度报告" - used by Alibaba)
+   - 年度报告 (e.g., "2024年度报告")
+
+**Note**: Some Hong Kong stocks may have limited historical data on cninfo.com.cn, especially those that listed recently.

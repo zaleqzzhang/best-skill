@@ -52,8 +52,11 @@ class CnInfoDownloader:
 
     def _get_exchange_info(self, stock_code: str) -> tuple:
         """Get column and plate based on stock code"""
+        # Hong Kong stocks: 5-digit codes starting with 00, 01, 02, 09
+        if len(stock_code) == 5 and stock_code.startswith(("00", "01", "02", "09")):
+            return "hke", "hk"
         # Shanghai stocks: 6xxxxx
-        if stock_code.startswith("6"):
+        elif stock_code.startswith("6"):
             return "sse", "sh"
         # Shenzhen stocks: 0xxxxx, 3xxxxx
         elif stock_code.startswith(("0", "3")):
@@ -61,9 +64,71 @@ class CnInfoDownloader:
         # Beijing stocks: 4xxxxx, 8xxxxx
         elif stock_code.startswith(("4", "8")):
             return "bse", "bj"
-        # Hong Kong stocks
-        else:
+        # Default to Hong Kong for other 5-digit codes
+        elif len(stock_code) == 5:
             return "hke", "hk"
+        else:
+            return "szse", "sz"
+    
+    def _fetch_hk_announcements(self, stock_code: str, search_key: str, max_pages: int = 10) -> list:
+        """Fetch Hong Kong stock announcements using search API"""
+        import urllib.parse
+        all_announcements = []
+        seen_ids = set()
+        
+        encoded_key = urllib.parse.quote(search_key)
+        
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            context = browser.new_context(
+                user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
+            )
+            page = context.new_page()
+            
+            try:
+                # Access HK disclosure page first
+                page.goto(
+                    "https://www.cninfo.com.cn/new/commonUrl?url=disclosure/list/notice#hke%2F1_hkeMain",
+                    wait_until="networkidle",
+                    timeout=30000
+                )
+                time.sleep(1)
+                
+                for page_num in range(1, max_pages + 1):
+                    result = page.evaluate('''async (params) => {
+                        try {
+                            const response = await fetch('/new/hisAnnouncement/query', {
+                                method: 'POST',
+                                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                                body: `stock=&tabName=fulltext&pageSize=30&pageNum=${params.page}&column=hke&plate=hk&category=&seDate=&searchkey=${params.key}&secid=&sortName=&sortType=&isHLtitle=true`
+                            });
+                            return await response.json();
+                        } catch (e) {
+                            return { error: e.toString() };
+                        }
+                    }''', {"page": page_num, "key": encoded_key})
+                    
+                    anns = result.get('announcements') or []
+                    if not anns:
+                        break
+                    
+                    new_count = 0
+                    for ann in anns:
+                        ann_id = ann.get('announcementId')
+                        if ann_id and ann_id not in seen_ids:
+                            seen_ids.add(ann_id)
+                            all_announcements.append(ann)
+                            new_count += 1
+                    
+                    if new_count == 0:
+                        break
+                        
+            except Exception as e:
+                print(f"      Error fetching HK announcements: {e}")
+            
+            browser.close()
+        
+        return all_announcements
     
     def _fetch_announcements_by_category(self, stock_code: str, org_id: str, category: str, 
                                           column: str, plate: str, max_pages: int = 20) -> list:
@@ -219,9 +284,114 @@ class CnInfoDownloader:
             print(f"      Download error: {e}")
         return False
 
+    def _is_hk_annual_report(self, title: str, year: int) -> bool:
+        """Check if title is a Hong Kong annual report for given year"""
+        import re
+        title_clean = title.replace('<em>', '').replace('</em>', '')
+        
+        # Check for year in both Arabic and Chinese numerals
+        year_str = str(year)
+        chinese_year = to_chinese_year(year)
+        if year_str not in title_clean and chinese_year not in title_clean:
+            return False
+        
+        # HK annual report patterns
+        patterns = [
+            r'年报',
+            r'年度报告',
+            r'财务年度报告',
+            r'annual\s*report',
+        ]
+        
+        if not any(re.search(p, title_clean, re.IGNORECASE) for p in patterns):
+            return False
+        
+        # Exclude non-full reports
+        exclude_keywords = [
+            "摘要", "英文", "节选", "中期报告", "季度", "季报",
+            "半年度", "半年报", "ESG", "社会责任", "内部控制"
+        ]
+        if any(kw in title_clean for kw in exclude_keywords):
+            return False
+        
+        return True
+
+    def _is_hk_periodic_report(self, title: str, year: int, rtype: str) -> bool:
+        """Check if title is a Hong Kong periodic report
+        
+        HK stocks use different formats:
+        - Q1: 截至X年3月31日止三个月的业绩公告
+        - semi: X年中期报告 或 截至X年6月30日止三个月及六个月的业绩公告
+        - Q3: 截至X年9月30日止三个月及九个月的业绩公告
+        """
+        title_clean = title.replace('<em>', '').replace('</em>', '')
+        
+        # Check year in both Arabic and Chinese numerals
+        year_str = str(year)
+        chinese_year = to_chinese_year(year)
+        if year_str not in title_clean and chinese_year not in title_clean:
+            return False
+        
+        # Map months to report types
+        # Q1: March (3月)
+        # semi: June (6月) 
+        # Q3: September (9月)
+        month_patterns = {
+            "Q1": [r'3月31日', r'3月30日', r'第一季', r'一季报', '三月三十一日'],
+            "semi": [r'6月30日', r'中期报告', r'半年报', r'半年度', r'中期', '六月三十日'],
+            "Q3": [r'9月30日', r'第三季', r'三季报', '九月三十日'],
+        }
+        
+        # Check for "业绩公告" or "业绩公布" with matching month
+        if '业绩' in title_clean:
+            for pattern in month_patterns.get(rtype, []):
+                if pattern in title_clean:
+                    return True
+        
+        # Also check traditional patterns
+        patterns = {
+            "Q1": [r'第一季', r'一季'],
+            "semi": [r'中期报告', r'半年', r'interim', r'中期'],
+            "Q3": [r'第三季', r'三季'],
+        }
+        
+        return any(p in title_clean.lower() for p in patterns.get(rtype, []))
+
     def download_annual_reports(self, stock_code: str, org_id: str, years: list, 
                                   output_dir: str, market: str) -> list:
         column, plate = self._get_exchange_info(stock_code)
+        
+        # Hong Kong stocks use search API
+        if market == "hke" or column == "hke":
+            print(f"  Fetching HK stock announcements (stock={stock_code})...")
+            anns = self._fetch_hk_announcements(stock_code, stock_code, max_pages=10)
+            
+            files = []
+            found_years = set()
+            
+            for ann in anns:
+                # Filter by stock code
+                if ann.get('secCode') != stock_code:
+                    continue
+                    
+                title = ann.get("announcementTitle", "")
+                title_clean = title.replace('<em>', '').replace('</em>', '')
+                
+                for year in years:
+                    if year in found_years:
+                        continue
+                    if self._is_hk_annual_report(title, year):
+                        url = ann.get('adjunctUrl', '')
+                        path = os.path.join(output_dir, f"{stock_code}_{year}_annual.pdf")
+                        if self._download_pdf(url, path):
+                            print(f"    ✅ {title_clean}")
+                            files.append(path)
+                            found_years.add(year)
+                            break
+            
+            return files
+        
+        # A-share stocks use category-based API
         print(f"  Fetching announcements (column={column}, plate={plate})...")
         anns = self._fetch_all_announcements(stock_code, org_id, column, plate)
         
@@ -242,6 +412,31 @@ class CnInfoDownloader:
     def download_periodic_reports(self, stock_code: str, org_id: str, year: int,
                                     output_dir: str, market: str) -> list:
         column, plate = self._get_exchange_info(stock_code)
+        
+        # Hong Kong stocks use search API
+        if market == "hke" or column == "hke":
+            print(f"  Fetching HK periodic reports (stock={stock_code})...")
+            anns = self._fetch_hk_announcements(stock_code, stock_code, max_pages=10)
+            
+            files = []
+            for rtype in ["Q1", "semi", "Q3"]:
+                for ann in anns:
+                    if ann.get('secCode') != stock_code:
+                        continue
+                        
+                    title = ann.get("announcementTitle", "")
+                    title_clean = title.replace('<em>', '').replace('</em>', '')
+                    
+                    if self._is_hk_periodic_report(title, year, rtype):
+                        url = ann.get('adjunctUrl', '')
+                        path = os.path.join(output_dir, f"{stock_code}_{year}_{rtype}.pdf")
+                        if self._download_pdf(url, path):
+                            print(f"    ✅ {title_clean}")
+                            files.append(path)
+                            break
+            return files
+        
+        # A-share stocks use category-based API
         print(f"  Fetching announcements for periodic reports (column={column}, plate={plate})...")
         anns = self._fetch_all_announcements(stock_code, org_id, column, plate)
         
@@ -277,7 +472,8 @@ def main():
     print(f"📁 Output: {output_dir}")
 
     now = datetime.datetime.now().year
-    years = list(range(2020, now + 1))
+    # 默认下载近10年年报
+    years = list(range(now - 9, now + 1))
 
     print(f"\n📥 Annual reports: {years}")
     annual = dl.download_annual_reports(code, org_id, years, output_dir, market)

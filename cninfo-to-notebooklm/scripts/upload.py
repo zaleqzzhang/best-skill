@@ -16,6 +16,7 @@ import json
 import shutil
 import time
 import re
+import asyncio
 
 # Cache file for notebook mappings
 NOTEBOOK_CACHE_FILE = os.path.join(
@@ -108,7 +109,30 @@ def create_notebook(title: str) -> str:
     return output.strip().split()[-1] if output.strip() else None
 
 def find_existing_notebook(notebook_title: str) -> str:
-    """Search for existing notebook by title in NotebookLM"""
+    """Search for existing notebook by title in NotebookLM using Python API.
+    
+    Returns the full notebook ID if found, None otherwise.
+    """
+    try:
+        from notebooklm import NotebookLMClient
+        
+        async def _find():
+            async with await NotebookLMClient.from_storage() as client:
+                notebooks = await client.notebooks.list()
+                for nb in notebooks:
+                    if nb.title == notebook_title:
+                        print(f"🔍 Found existing notebook: {nb.id}")
+                        return nb.id
+                return None
+        
+        return asyncio.run(_find())
+    except Exception as e:
+        print(f"⚠️ Python API search failed: {e}, falling back to CLI")
+        return _find_existing_notebook_cli(notebook_title)
+
+
+def _find_existing_notebook_cli(notebook_title: str) -> str:
+    """Fallback: Search for existing notebook by title using CLI (may return truncated ID)."""
     success, output = run_notebooklm_command(["list"])
     if not success:
         return None
@@ -143,7 +167,7 @@ def find_existing_notebook(notebook_title: str) -> str:
                     id_part = id_part[:-1]
                 # Validate it looks like a UUID prefix
                 if re.match(r"^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}", id_part):
-                    print(f"🔍 Found existing notebook in NotebookLM: {id_part}...")
+                    print(f"🔍 Found existing notebook in NotebookLM (truncated ID): {id_part}...")
                     return id_part
     
     return None
@@ -271,21 +295,23 @@ def upload_all_sources(notebook_id: str, files: list) -> dict:
         # Check if file already exists (exact match or prefix match for truncated names)
         should_skip = False
         for existing in existing_sources:
-            # Check if existing source matches this file
-            # Handle truncated names like "000708_2019_a…" matching "000708_2019_annual"
+            # Remove truncation marker if present
+            existing_base = existing.rstrip("…")
+            
+            # Exact match
             if existing == filename or existing == filename_no_ext:
                 should_skip = True
                 break
-            # Prefix match for truncated names
-            if existing.endswith("…"):
-                prefix = existing[:-1]
-                if filename_no_ext.startswith(prefix):
+            
+            # Check if both start with the same prefix (for truncated names)
+            # e.g., "00700_2025_semi.p" matches "00700_2025_semi"
+            # The truncated name might include part of the extension or extra chars
+            if existing_base and filename_no_ext.startswith(existing_base[:len(filename_no_ext)]):
+                # More precise check: existing_base should be a prefix of filename_no_ext
+                # OR filename_no_ext should be a prefix of existing_base
+                if filename_no_ext.startswith(existing_base) or existing_base.startswith(filename_no_ext):
                     should_skip = True
                     break
-            # Also check if filename starts with existing (non-truncated)
-            if filename_no_ext.startswith(existing.rstrip("…")):
-                should_skip = True
-                break
         
         if should_skip:
             print(f"📤 Skipping (already exists): {filename}")
@@ -376,6 +402,8 @@ def main():
         sys.exit(1)
 
     notebook_title = sys.argv[1]
+    stock_code = ""
+    stock_name = notebook_title
 
     # Handle JSON input from download.py
     if sys.argv[2] == "--json":
@@ -384,7 +412,9 @@ def main():
             data = json.load(f)
         files = data.get("files", [])
         temp_dir = data.get("output_dir")
-        notebook_title = f"{data.get('stock_name', notebook_title)} 财务报告"
+        stock_code = data.get("stock_code", "")
+        stock_name = data.get("stock_name", notebook_title)
+        notebook_title = f"{stock_name} 财务报告"
     else:
         files = sys.argv[2:]
         temp_dir = None
@@ -394,9 +424,19 @@ def main():
         sys.exit(1)
 
     print(f"📁 Files to upload: {len(files)}")
-
-    # Create notebook
-    notebook_id = create_notebook(notebook_title)
+    
+    # Get existing notebook or create new one
+    if stock_code:
+        notebook_id = get_or_create_notebook(stock_code, stock_name)
+    else:
+        # Fallback: search by title
+        existing_id = find_existing_notebook(notebook_title)
+        if existing_id:
+            notebook_id = existing_id
+            print(f"✅ Using existing notebook: {notebook_id}")
+        else:
+            notebook_id = create_notebook(notebook_title)
+    
     if not notebook_id:
         sys.exit(1)
 
@@ -424,6 +464,7 @@ def main():
     }
     print("\n---JSON_OUTPUT---")
     print(json.dumps(result, ensure_ascii=False, indent=2))
+
 
 if __name__ == "__main__":
     main()

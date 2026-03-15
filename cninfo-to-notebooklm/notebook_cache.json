@@ -14,9 +14,9 @@
     },
     "600036": {
       "stock_name": "招商银行",
-      "notebook_id": "f6847417-dcee-4015-bed7-c3de1cd90567",
+      "notebook_id": "ab950ec0-1979-466a-b73c-8676183d2948",
       "notebook_title": "招商银行 财务报告",
-      "updated_at": "2026-03-13 23:15:54"
+      "updated_at": "2026-03-16 01:12:00"
     },
     "003816": {
       "stock_name": "中国广核",
@@ -41,6 +41,54 @@
       "notebook_id": "6da2e7c7-c8d7-4386-8d1e-413185fe5f86",
       "notebook_title": "贵研铂业 财务报告",
       "updated_at": "2026-03-15 23:11:22"
+    },
+    "00700": {
+      "stock_name": "腾讯控股",
+      "notebook_id": "bc74d77a-4bc0-4c99-81bf-b1fccc4e0113",
+      "notebook_title": "腾讯控股 财务报告",
+      "updated_at": "2026-03-15 23:56:00"
+    },
+    "09988": {
+      "stock_name": "阿里巴巴-SW",
+      "notebook_id": "190fa7f8-3c78-4b97-af2f-864e2f70ce6a",
+      "notebook_title": "阿里巴巴-SW 财务报告",
+      "updated_at": "2026-03-15 23:44:41"
+    },
+    "600519": {
+      "stock_name": "贵州茅台",
+      "notebook_id": "87835256-4e0d-4d3c-a51b-2e2c29585368",
+      "notebook_title": "贵州茅台 财务报告",
+      "updated_at": "2026-03-15 23:47:39"
+    },
+    "01024": {
+      "stock_name": "快手-W",
+      "notebook_id": "61da22e7-9e00-4c5f-b6a2-884ea19d200d",
+      "notebook_title": "快手-W 财务报告",
+      "updated_at": "2026-03-16 00:03:00"
+    },
+    "03690": {
+      "stock_name": "美团-W",
+      "notebook_id": "88a10d37-50cc-4188-b8aa-982bf44b044f",
+      "notebook_title": "美团-W 财务报告",
+      "updated_at": "2026-03-16 00:15:09"
+    },
+    "09868": {
+      "stock_name": "小鹏汽车-W",
+      "notebook_id": "c483aa14-2ecb-4d7b-ba29-2cf89a0a2027",
+      "notebook_title": "小鹏汽车-W 财务报告",
+      "updated_at": "2026-03-16 00:20:17"
+    },
+    "09999": {
+      "stock_name": "网易-S",
+      "notebook_id": "206571f6-d81c-477e-bb9f-2c59caa2b9a7",
+      "notebook_title": "网易-S 财务报告",
+      "updated_at": "2026-03-16 00:46:15"
+    },
+    "01810": {
+      "stock_name": "小米集团-W",
+      "notebook_id": "51b49b86-f932-4f11-9f8b-8cd49299ea73",
+      "notebook_title": "小米集团-W 财务报告",
+      "updated_at": "2026-03-16 00:49:09"
     }
   }
 }
