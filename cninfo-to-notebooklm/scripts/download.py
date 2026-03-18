@@ -323,6 +323,7 @@ class CnInfoDownloader:
         - Q1: 截至X年3月31日止三个月的业绩公告
         - semi: X年中期报告 或 截至X年6月30日止三个月及六个月的业绩公告
         - Q3: 截至X年9月30日止三个月及九个月的业绩公告
+        - Q4: X年第四季度及全年未经审计财务业绩公告
         """
         title_clean = title.replace('<em>', '').replace('</em>', '')
         
@@ -336,10 +337,12 @@ class CnInfoDownloader:
         # Q1: March (3月)
         # semi: June (6月) 
         # Q3: September (9月)
+        # Q4: December (12月) - 全年业绩
         month_patterns = {
-            "Q1": [r'3月31日', r'3月30日', r'第一季', r'一季报', '三月三十一日'],
-            "semi": [r'6月30日', r'中期报告', r'半年报', r'半年度', r'中期', '六月三十日'],
-            "Q3": [r'9月30日', r'第三季', r'三季报', '九月三十日'],
+            "Q1": [r'3月31日', r'3月30日', r'第一季', r'一季报', '三月三十一日', '第一季度'],
+            "semi": [r'6月30日', r'中期报告', r'半年报', r'半年度', r'中期', '六月三十日', '第二季度'],
+            "Q3": [r'9月30日', r'第三季', r'三季报', '九月三十日', '第三季度'],
+            "Q4": [r'12月31日', r'第四季', r'四季报', '十二月三十一日', '第四季度', '全年'],
         }
         
         # Check for "业绩公告" or "业绩公布" with matching month
@@ -353,6 +356,7 @@ class CnInfoDownloader:
             "Q1": [r'第一季', r'一季'],
             "semi": [r'中期报告', r'半年', r'interim', r'中期'],
             "Q3": [r'第三季', r'三季'],
+            "Q4": [r'第四季', r'四季', r'全年'],
         }
         
         return any(p in title_clean.lower() for p in patterns.get(rtype, []))
@@ -419,7 +423,7 @@ class CnInfoDownloader:
             anns = self._fetch_hk_announcements(stock_code, stock_code, max_pages=10)
             
             files = []
-            for rtype in ["Q1", "semi", "Q3"]:
+            for rtype in ["Q1", "semi", "Q3", "Q4"]:
                 for ann in anns:
                     if ann.get('secCode') != stock_code:
                         continue
@@ -429,7 +433,9 @@ class CnInfoDownloader:
                     
                     if self._is_hk_periodic_report(title, year, rtype):
                         url = ann.get('adjunctUrl', '')
-                        path = os.path.join(output_dir, f"{stock_code}_{year}_{rtype}.pdf")
+                        # Q4财报包含全年数据，保存为annual
+                        save_type = "annual" if rtype == "Q4" else rtype
+                        path = os.path.join(output_dir, f"{stock_code}_{year}_{save_type}.pdf")
                         if self._download_pdf(url, path):
                             print(f"    ✅ {title_clean}")
                             files.append(path)
