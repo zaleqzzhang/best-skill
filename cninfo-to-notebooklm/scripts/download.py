@@ -248,8 +248,8 @@ class CnInfoDownloader:
         # Must be annual report
         if "年度报告" not in title:
             return False
-        # Exclude non-full reports
-        if any(kw in title for kw in ["摘要", "英文", "节选", "审计报告", "内部控制", "社会责任", "环境", "ESG"]):
+        # Exclude non-full reports (must check 半年度 before 年度)
+        if any(kw in title for kw in ["半年度", "摘要", "英文", "节选", "审计报告", "内部控制", "社会责任", "环境", "ESG"]):
             return False
         return True
 
