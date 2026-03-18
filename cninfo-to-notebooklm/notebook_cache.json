@@ -101,6 +101,30 @@
       "notebook_id": "d02ecd03-91a4-40d7-bd1e-6aca6e1f4c03",
       "notebook_title": "腾讯音乐-SW 财务报告",
       "updated_at": "2026-03-18 07:41:37"
+    },
+    "002415": {
+      "stock_name": "海康威视",
+      "notebook_id": "a3ad0480-2417-446b-9fff-c874895bf855",
+      "notebook_title": "海康威视 财务报告",
+      "updated_at": "2026-03-18 08:18:47"
+    },
+    "002079": {
+      "stock_name": "苏州固锝",
+      "notebook_id": "d9a9aed9-d58f-497f-889c-146e83bbfd38",
+      "notebook_title": "苏州固锝 财务报告",
+      "updated_at": "2026-03-18 21:22:30"
+    },
+    "688315": {
+      "stock_name": "诺禾致源",
+      "notebook_id": "2f1a50e1-03a7-4200-8d1e-37ed9b270379",
+      "notebook_title": "诺禾致源 财务报告",
+      "updated_at": "2026-03-18 21:29:46"
+    },
+    "601636": {
+      "stock_name": "旗滨集团",
+      "notebook_id": "1ccbb8bb-2b56-4652-aa2f-5f25a210e79f",
+      "notebook_title": "旗滨集团 财务报告",
+      "updated_at": "2026-03-18 21:35:35"
     }
   }
 }

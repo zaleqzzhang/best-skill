@@ -259,7 +259,7 @@ class CnInfoDownloader:
         if any(kw in title for kw in ["摘要", "英文", "节选"]):
             return False
         keywords = {
-            "Q1": ["第一季度报告", "一季报"],
+            "Q1": ["第一季度报告", "一季度报告", "一季报"],
             "semi": ["半年度报告", "中期报告"],
             "Q3": ["第三季度报告", "三季度报告", "三季报"],
         }
