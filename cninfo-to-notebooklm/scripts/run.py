@@ -10,6 +10,8 @@ import os
 import json
 import tempfile
 import shutil
+import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # Add scripts directory to path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -17,33 +19,29 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from download import CnInfoDownloader
 import datetime
 
-def main():
-    """Main entry point"""
-    if len(sys.argv) < 2:
-        print("Usage: python run.py <stock_code_or_name>")
-        print("")
-        print("Examples:")
-        print("  python run.py 600519        # A-share by code")
-        print("  python run.py 贵州茅台       # A-share by name")
-        print("  python run.py 00700         # Hong Kong stock by code")
-        print("  python run.py 腾讯控股       # Hong Kong by name")
-        print("")
-        print("This will:")
-        print("  1. Download annual reports (last 5 years)")
-        print("  2. Download periodic reports (Q1, semi-annual, Q3)")
-        print("  3. Upload all to NotebookLM")
-        sys.exit(1)
-
-    stock_input = sys.argv[1]
-
-    # Initialize downloader
-    downloader = CnInfoDownloader()
-
+def download_reports_for_stock(downloader, stock_input, stock_index=None, total_stocks=None):
+    """Download reports for a single stock (can run in parallel)
+    
+    Args:
+        downloader: CnInfoDownloader instance
+        stock_input: Stock code or name
+        stock_index: Current stock index (for batch processing display)
+        total_stocks: Total number of stocks (for batch processing display)
+    
+    Returns:
+        dict with download results (files not uploaded yet)
+    """
+    # Show progress for batch processing
+    if stock_index is not None and total_stocks is not None:
+        print(f"\n{'=' * 60}")
+        print(f"📥 [{stock_index}/{total_stocks}] Downloading: {stock_input}")
+        print(f"{'=' * 60}")
+    
     # Find stock (now returns market too)
     stock_code, stock_info, market = downloader.find_stock(stock_input)
     if not stock_code:
         print(f"❌ Stock not found: {stock_input}", file=sys.stderr)
-        sys.exit(1)
+        return {"success": False, "stock_input": stock_input, "error": f"Stock not found: {stock_input}"}
 
     stock_name = stock_info.get("zwjc", stock_code)
     org_id = stock_info.get("orgId", "")
@@ -87,11 +85,48 @@ def main():
     if not all_files:
         print("❌ No reports downloaded")
         shutil.rmtree(output_dir)
-        sys.exit(1)
+        return {"success": False, "stock_input": stock_input, "error": "No reports downloaded"}
 
-    print(f"\n{'=' * 50}")
-    print(f"✅ Downloaded {len(all_files)} reports")
+    print(f"\n✅ Downloaded {len(all_files)} reports for {stock_name}")
+    
+    return {
+        "success": True,
+        "stock_input": stock_input,
+        "stock_code": stock_code,
+        "stock_name": stock_name,
+        "market": market,
+        "market_display": market_display,
+        "output_dir": output_dir,
+        "files": all_files
+    }
 
+def upload_reports_for_stock(download_result, stock_index=None, total_stocks=None):
+    """Upload reports to NotebookLM (must run sequentially)
+    
+    Args:
+        download_result: Result dict from download_reports_for_stock
+        stock_index: Current stock index (for batch processing display)
+        total_stocks: Total number of stocks (for batch processing display)
+    
+    Returns:
+        dict with final results
+    """
+    if not download_result.get("success"):
+        return download_result
+    
+    stock_input = download_result["stock_input"]
+    stock_code = download_result["stock_code"]
+    stock_name = download_result["stock_name"]
+    market_display = download_result["market_display"]
+    output_dir = download_result["output_dir"]
+    all_files = download_result["files"]
+    
+    # Show progress for batch processing
+    if stock_index is not None and total_stocks is not None:
+        print(f"\n{'=' * 60}")
+        print(f"📤 [{stock_index}/{total_stocks}] Uploading: {stock_name}")
+        print(f"{'=' * 60}")
+    
     # Check if notebooklm is available
     if not shutil.which("notebooklm"):
         print("\n⚠️ NotebookLM CLI not found!")
@@ -101,20 +136,17 @@ def main():
         print(f"\n📁 Files saved to: {output_dir}")
         print("You can manually upload these PDFs to NotebookLM")
         
-        # Output JSON for manual use
-        result = {
-            "stock_code": stock_code,
+        return {
+            "success": False, 
+            "stock_input": stock_input,
             "stock_name": stock_name,
-            "market": market,
+            "error": "NotebookLM CLI not found",
             "output_dir": output_dir,
-            "files": all_files,
+            "files": all_files
         }
-        print("\n---JSON_OUTPUT---")
-        print(json.dumps(result, ensure_ascii=False, indent=2))
-        sys.exit(0)
 
     # Upload to NotebookLM
-    print(f"\n📤 Uploading to NotebookLM...")
+    print(f"\n📤 Uploading {len(all_files)} files to NotebookLM...")
     
     from upload import (
         get_or_create_notebook,
@@ -129,7 +161,13 @@ def main():
     if not notebook_id:
         print("❌ Failed to create notebook")
         print(f"📁 Files saved to: {output_dir}")
-        sys.exit(1)
+        return {
+            "success": False, 
+            "stock_input": stock_input,
+            "stock_name": stock_name,
+            "error": "Failed to create notebook", 
+            "output_dir": output_dir
+        }
     
     notebook_title = f"{stock_name} 财务报告"
 
@@ -150,20 +188,128 @@ def main():
     cleanup_temp_files(all_files, output_dir)
 
     # Summary
-    print(f"\n{'=' * 50}")
-    print(f"🎉 COMPLETE!")
-    print(f"{'=' * 50}")
-    print(f"📊 Stock: {stock_code} ({stock_name}) [{market_display}]")
-    print(f"📚 Notebook: {notebook_title}")
-    print(f"📄 Uploaded: {len(results['success'])} reports")
+    print(f"\n✅ {stock_name}: Uploaded {len(results['success'])} reports")
     
     if results.get("skipped"):
-        print(f"⏭️ Skipped (already exists): {len(results['skipped'])} reports")
+        print(f"   ⏭️ Skipped (already exists): {len(results['skipped'])} reports")
     
     if results["failed"]:
-        print(f"❌ Failed: {len(results['failed'])} reports")
+        print(f"   ❌ Failed: {len(results['failed'])} reports")
     
-    print(f"\n💡 Open NotebookLM and ask questions about {stock_name}'s financials!")
+    return {
+        "success": True,
+        "stock_input": stock_input,
+        "stock_code": stock_code,
+        "stock_name": stock_name,
+        "notebook_id": notebook_id,
+        "uploaded": len(results['success']),
+        "skipped": len(results.get('skipped', [])),
+        "failed": len(results['failed'])
+    }
+
+def main():
+    """Main entry point - supports single or multiple stocks
+    
+    For multiple stocks:
+    - Downloads run in PARALLEL (faster)
+    - Uploads run SEQUENTIALLY (avoid NotebookLM context conflicts)
+    """
+    if len(sys.argv) < 2:
+        print("Usage: python run.py <stock_code_or_name> [stock2] [stock3] ...")
+        print("")
+        print("Examples:")
+        print("  python run.py 600519                  # Single A-share by code")
+        print("  python run.py 贵州茅台                 # Single A-share by name")
+        print("  python run.py 00700                   # Single Hong Kong stock")
+        print("  python run.py 仙坛股份 百川畅银        # Multiple stocks")
+        print("  python run.py 600519 00700 腾讯控股    # Mixed codes and names")
+        print("")
+        print("For multiple stocks:")
+        print("  - Downloads run in PARALLEL (faster)")
+        print("  - Uploads run SEQUENTIALLY (avoid conflicts)")
+        sys.exit(1)
+
+    # Get all stock inputs (support multiple stocks)
+    stock_inputs = sys.argv[1:]
+    total_stocks = len(stock_inputs)
+    
+    # Initialize downloader (shared across all stocks)
+    downloader = CnInfoDownloader()
+    
+    # ===== PHASE 1: PARALLEL DOWNLOAD =====
+    print(f"\n{'=' * 60}")
+    print(f"📥 PHASE 1: DOWNLOADING (parallel, {total_stocks} stocks)")
+    print(f"{'=' * 60}")
+    
+    download_results = []
+    
+    if total_stocks == 1:
+        # Single stock: no need for parallel
+        result = download_reports_for_stock(downloader, stock_inputs[0], 1, 1)
+        download_results.append(result)
+    else:
+        # Multiple stocks: download in parallel
+        with ThreadPoolExecutor(max_workers=min(total_stocks, 4)) as executor:
+            futures = {
+                executor.submit(download_reports_for_stock, downloader, stock_input, i, total_stocks): stock_input
+                for i, stock_input in enumerate(stock_inputs, 1)
+            }
+            
+            for future in as_completed(futures):
+                result = future.result()
+                download_results.append(result)
+        
+        # Sort by original order
+        stock_input_to_index = {s: i for i, s in enumerate(stock_inputs)}
+        download_results.sort(key=lambda r: stock_input_to_index.get(r.get("stock_input", ""), 999))
+    
+    # ===== PHASE 2: SEQUENTIAL UPLOAD =====
+    print(f"\n{'=' * 60}")
+    print(f"📤 PHASE 2: UPLOADING (sequential, {total_stocks} stocks)")
+    print(f"{'=' * 60}")
+    
+    final_results = []
+    
+    for i, download_result in enumerate(download_results, 1):
+        result = upload_reports_for_stock(download_result, i, total_stocks)
+        final_results.append(result)
+        
+        # Add delay between uploads to ensure NotebookLM context is clear
+        if i < total_stocks and result.get("success"):
+            delay = 2
+            print(f"\n⏳ Waiting {delay} seconds before next upload...")
+            time.sleep(delay)
+    
+    # ===== FINAL SUMMARY =====
+    if total_stocks > 1:
+        print(f"\n{'=' * 60}")
+        print(f"📋 BATCH SUMMARY ({total_stocks} stocks)")
+        print(f"{'=' * 60}")
+        
+        successful = sum(1 for r in final_results if r.get("success"))
+        failed = total_stocks - successful
+        
+        for i, (stock_input, result) in enumerate(zip(stock_inputs, final_results), 1):
+            status = "✅" if result.get("success") else "❌"
+            if result.get("success"):
+                print(f"  {status} {i}. {result.get('stock_name', stock_input)}: {result.get('uploaded', 0)} uploaded")
+            else:
+                print(f"  {status} {i}. {stock_input}: {result.get('error', 'Unknown error')}")
+        
+        print(f"\n  Total: {successful} successful, {failed} failed")
+    else:
+        # Single stock summary
+        result = final_results[0]
+        if result.get("success"):
+            print(f"\n{'=' * 50}")
+            print(f"🎉 COMPLETE!")
+            print(f"{'=' * 50}")
+            print(f"📊 Stock: {result.get('stock_code')} ({result.get('stock_name')})")
+            print(f"📚 Notebook: {result.get('stock_name')} 财务报告")
+            print(f"📄 Uploaded: {result.get('uploaded', 0)} reports")
+            if result.get("skipped"):
+                print(f"⏭️ Skipped: {result.get('skipped')} reports")
+            print(f"\n💡 Open NotebookLM and ask questions about {result.get('stock_name')}'s financials!")
 
 if __name__ == "__main__":
     main()

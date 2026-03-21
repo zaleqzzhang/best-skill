@@ -125,6 +125,102 @@
       "notebook_id": "1ccbb8bb-2b56-4652-aa2f-5f25a210e79f",
       "notebook_title": "旗滨集团 财务报告",
       "updated_at": "2026-03-18 21:35:35"
+    },
+    "002372": {
+      "stock_name": "伟星新材",
+      "notebook_id": "c8317fdb-93a0-4147-bea7-f9d15232a1c7",
+      "notebook_title": "伟星新材 财务报告",
+      "updated_at": "2026-03-20 07:54:44"
+    },
+    "002821": {
+      "stock_name": "凯莱英",
+      "notebook_id": "ce99d9d7-e1d7-4ab1-b483-0c3037e8188c",
+      "notebook_title": "凯莱英 财务报告",
+      "updated_at": "2026-03-20 08:01:21"
+    },
+    "301060": {
+      "stock_name": "兰卫医学",
+      "notebook_id": "ffe9eb5e-352a-4c98-a890-fae2bfa6bafe",
+      "notebook_title": "兰卫医学 财务报告",
+      "updated_at": "2026-03-20 08:02:46"
+    },
+    "301207": {
+      "stock_name": "华兰疫苗",
+      "notebook_id": "f1cd8a79-558c-46f4-ac75-429f6629cbd5",
+      "notebook_title": "华兰疫苗 财务报告",
+      "updated_at": "2026-03-20 08:22:43"
+    },
+    "688339": {
+      "stock_name": "亿华通",
+      "notebook_id": "355c3277-ee90-4e56-915a-19f0ce8c24cc",
+      "notebook_title": "亿华通 财务报告",
+      "updated_at": "2026-03-20 08:25:51"
+    },
+    "600361": {
+      "stock_name": "创新新材",
+      "notebook_id": "9dac0c7d-51ee-4d07-bace-f1397ec3f8b6",
+      "notebook_title": "创新新材 财务报告",
+      "updated_at": "2026-03-20 08:25:53"
+    },
+    "002254": {
+      "stock_name": "泰和新材",
+      "notebook_id": "fd3afef6-e299-45a7-bd17-9e6d423fc160",
+      "notebook_title": "泰和新材 财务报告",
+      "updated_at": "2026-03-21 09:03:25"
+    },
+    "002746": {
+      "stock_name": "仙坛股份",
+      "notebook_id": "9c56aad3-be9d-4a73-8eb8-8b9f3d9c62dd",
+      "notebook_title": "仙坛股份 财务报告",
+      "updated_at": "2026-03-21 09:11:35"
+    },
+    "300614": {
+      "stock_name": "百川畅银",
+      "notebook_id": "93b85413-f808-4aec-b188-e631d7530ff4",
+      "notebook_title": "百川畅银 财务报告",
+      "updated_at": "2026-03-21 09:11:36"
+    },
+    "603987": {
+      "stock_name": "康德莱",
+      "notebook_id": "1839a812-bc5d-497c-88a2-3d0049a3ada8",
+      "notebook_title": "康德莱 财务报告",
+      "updated_at": "2026-03-21 09:43:30"
+    },
+    "603989": {
+      "stock_name": "艾华集团",
+      "notebook_id": "2d1d870f-7421-4003-8c02-924854a354cf",
+      "notebook_title": "艾华集团 财务报告",
+      "updated_at": "2026-03-21 09:48:46"
+    },
+    "金牌家居": {
+      "stock_name": "金牌家居",
+      "notebook_id": "32250412-03a6-4b81-8253-2a3e9c98cf3a",
+      "notebook_title": "金牌家居 财务报告",
+      "updated_at": "2026-03-21 09:54:29"
+    },
+    "002612": {
+      "stock_name": "朗姿股份",
+      "notebook_id": "bdf88d3c-bd62-4aba-914e-358ab3332e26",
+      "notebook_title": "朗姿股份 财务报告",
+      "updated_at": "2026-03-21 09:57:12"
+    },
+    "003012": {
+      "stock_name": "东鹏控股",
+      "notebook_id": "d39d3189-8b72-4782-ac94-b7724d7fc8f1",
+      "notebook_title": "东鹏控股 财务报告",
+      "updated_at": "2026-03-21 10:00:15"
+    },
+    "603110": {
+      "stock_name": "东方材料",
+      "notebook_id": "f774f440-b946-49e9-8f1a-5fd0de3f003c",
+      "notebook_title": "东方材料 财务报告",
+      "updated_at": "2026-03-21 10:01:59"
+    },
+    "603995": {
+      "stock_name": "甬金股份",
+      "notebook_id": "01f528af-4fee-4e8b-b382-a6233b48a508",
+      "notebook_title": "甬金股份 财务报告",
+      "updated_at": "2026-03-21 10:04:49"
     }
   }
 }
