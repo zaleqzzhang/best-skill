@@ -51,6 +51,47 @@ def _get_cached_notebook(stock_code: str) -> str:
     cache = _load_notebook_cache()
     return cache.get("stocks", {}).get(stock_code, {}).get("notebook_id")
 
+def _verify_notebook_exists(notebook_id: str) -> bool:
+    """Verify that a notebook ID exists in NotebookLM.
+    
+    Returns True if notebook exists, False otherwise.
+    Uses Python API for reliable verification.
+    """
+    try:
+        from notebooklm import NotebookLMClient
+        
+        async def _check():
+            async with await NotebookLMClient.from_storage() as client:
+                notebooks = await client.notebooks.list()
+                notebook_ids = {nb.id for nb in notebooks}
+                return notebook_id in notebook_ids
+        
+        return asyncio.run(_check())
+    except Exception as e:
+        print(f"⚠️ Failed to verify notebook via API: {e}")
+        # Fallback: try CLI approach
+        return _verify_notebook_exists_cli(notebook_id)
+
+def _verify_notebook_exists_cli(notebook_id: str) -> bool:
+    """Fallback: verify notebook exists using CLI."""
+    success, output = run_notebooklm_command(["list"])
+    if not success:
+        return False
+    
+    # Check if notebook_id (or its prefix) appears in the list
+    # Note: CLI list may show truncated IDs
+    prefix = notebook_id[:8]  # Use first 8 chars as prefix
+    return prefix in output
+
+def _invalidate_cached_notebook(stock_code: str):
+    """Remove invalid notebook from cache."""
+    cache = _load_notebook_cache()
+    if stock_code in cache.get("stocks", {}):
+        old_id = cache["stocks"][stock_code].get("notebook_id", "")
+        del cache["stocks"][stock_code]
+        _save_notebook_cache(cache)
+        print(f"🗑️ Removed invalid cached notebook for {stock_code}: {old_id}")
+
 def _cache_notebook(stock_code: str, stock_name: str, notebook_id: str, notebook_title: str):
     """Cache notebook ID for a stock"""
     cache = _load_notebook_cache()
@@ -173,18 +214,32 @@ def _find_existing_notebook_cli(notebook_title: str) -> str:
     return None
 
 def get_or_create_notebook(stock_code: str, stock_name: str, force_new: bool = False) -> str:
-    """Get existing notebook or create new one for a stock"""
+    """Get existing notebook or create new one for a stock.
+    
+    This function:
+    1. Checks cache for a notebook ID
+    2. Validates that the cached notebook actually exists in NotebookLM
+    3. If cache is invalid, searches for existing notebook by title
+    4. If not found, creates a new notebook
+    """
     notebook_title = f"{stock_name} 财务报告"
     
-    # 1. Check cache first
+    # 1. Check cache first and validate
     if not force_new:
         cached_id = _get_cached_notebook(stock_code)
         if cached_id:
             print(f"📋 Found cached notebook for {stock_code}: {cached_id}")
-            print(f"✅ Using cached notebook: {cached_id}")
-            return cached_id
+            
+            # Verify the cached notebook still exists
+            print(f"🔍 Verifying notebook exists in NotebookLM...")
+            if _verify_notebook_exists(cached_id):
+                print(f"✅ Using cached notebook: {cached_id}")
+                return cached_id
+            else:
+                print(f"⚠️ Cached notebook no longer exists, invalidating cache...")
+                _invalidate_cached_notebook(stock_code)
     
-    # 2. Search for existing notebook in NotebookLM
+    # 2. Search for existing notebook in NotebookLM by title
     if not force_new:
         existing_id = find_existing_notebook(notebook_title)
         if existing_id:

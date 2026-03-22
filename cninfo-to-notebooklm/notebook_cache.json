@@ -1,17 +1,5 @@
 {
   "stocks": {
-    "000708": {
-      "stock_name": "中信特钢",
-      "notebook_id": "0dd6d80c-d30d-4258-bdb7-ac8fdf1fc0b6",
-      "notebook_title": "中信特钢 财务报告",
-      "updated_at": "2026-03-13 22:46:34"
-    },
-    "600036": {
-      "stock_name": "招商银行",
-      "notebook_id": "ab950ec0-1979-466a-b73c-8676183d2948",
-      "notebook_title": "招商银行 财务报告",
-      "updated_at": "2026-03-16 01:12:00"
-    },
     "003816": {
       "stock_name": "中国广核",
       "notebook_id": "57ba1d1b-6940-4668-a3cc-2bccc4655d54",
@@ -101,12 +89,6 @@
       "notebook_id": "d02ecd03-91a4-40d7-bd1e-6aca6e1f4c03",
       "notebook_title": "腾讯音乐-SW 财务报告",
       "updated_at": "2026-03-18 07:41:37"
-    },
-    "002415": {
-      "stock_name": "海康威视",
-      "notebook_id": "a3ad0480-2417-446b-9fff-c874895bf855",
-      "notebook_title": "海康威视 财务报告",
-      "updated_at": "2026-03-18 08:18:47"
     },
     "002079": {
       "stock_name": "苏州固锝",
@@ -221,6 +203,60 @@
       "notebook_id": "01f528af-4fee-4e8b-b382-a6233b48a508",
       "notebook_title": "甬金股份 财务报告",
       "updated_at": "2026-03-21 10:04:49"
+    },
+    "600493": {
+      "stock_name": "凤竹纺织",
+      "notebook_id": "7dabb0fd-f55d-4289-86cc-6d6ef55ea141",
+      "notebook_title": "凤竹纺织 财务报告",
+      "updated_at": "2026-03-21 14:44:55"
+    },
+    "600697": {
+      "stock_name": "欧亚集团",
+      "notebook_id": "203bd29a-9436-435c-a9b4-5c60ca4b33d4",
+      "notebook_title": "欧亚集团 财务报告",
+      "updated_at": "2026-03-21 14:51:08"
+    },
+    "603022": {
+      "stock_name": "新通联",
+      "notebook_id": "db7c59a9-46b3-4fd3-afc5-e445103c561a",
+      "notebook_title": "新通联 财务报告",
+      "updated_at": "2026-03-21 14:56:01"
+    },
+    "001336": {
+      "stock_name": "楚环科技",
+      "notebook_id": "41b09f9a-6217-4b81-b321-87995002e6a0",
+      "notebook_title": "楚环科技 财务报告",
+      "updated_at": "2026-03-21 14:59:05"
+    },
+    "600016": {
+      "stock_name": "民生银行",
+      "notebook_id": "131e59ab-86a1-406b-8232-fc6b0d70c226",
+      "notebook_title": "民生银行 财务报告",
+      "updated_at": "2026-03-22 09:20:35"
+    },
+    "601318": {
+      "stock_name": "中国平安",
+      "notebook_id": "b753513c-dc00-44b9-bab1-a8710ca83d07",
+      "notebook_title": "中国平安 财务报告",
+      "updated_at": "2026-03-22 09:27:47"
+    },
+    "000708": {
+      "stock_name": "中信特钢",
+      "notebook_id": "b0fbbf4e-f23c-40bf-b31c-d5509210eb71",
+      "notebook_title": "中信特钢 财务报告",
+      "updated_at": "2026-03-22 10:40:03"
+    },
+    "002415": {
+      "stock_name": "海康威视",
+      "notebook_id": "04804261-6f49-4ebd-8b04-8c8d448bcd2e",
+      "notebook_title": "海康威视 财务报告",
+      "updated_at": "2026-03-22 10:48:00"
+    },
+    "600036": {
+      "stock_name": "招商银行",
+      "notebook_id": "53608c98-9781-421b-93d3-6e1a342b46d9",
+      "notebook_title": "招商银行 财务报告",
+      "updated_at": "2026-03-22 10:56:41"
     }
   }
 }
