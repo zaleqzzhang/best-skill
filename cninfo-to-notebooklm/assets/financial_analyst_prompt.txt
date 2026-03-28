@@ -630,3 +630,4 @@ def calculate_buying_zone(predicted_profit, pe_low, pe_mid, pe_high, total_share
 - 估值受市场情绪影响，需动态调整
 - AI 业务分析需结合行业特点和技术趋势
 - 投资决策需结合个人风险偏好
+

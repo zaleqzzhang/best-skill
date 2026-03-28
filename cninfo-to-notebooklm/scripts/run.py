@@ -37,11 +37,14 @@ def download_reports_for_stock(downloader, stock_input, stock_index=None, total_
         print(f"📥 [{stock_index}/{total_stocks}] Downloading: {stock_input}")
         print(f"{'=' * 60}")
     
-    # Find stock (now returns market too)
-    stock_code, stock_info, market = downloader.find_stock(stock_input)
-    if not stock_code:
+    # Find stock (now returns market too, or None if not found)
+    result = downloader.find_stock(stock_input)
+    if not result:
         print(f"❌ Stock not found: {stock_input}", file=sys.stderr)
+        print(f"   提示：请检查股票名称或代码是否正确", file=sys.stderr)
         return {"success": False, "stock_input": stock_input, "error": f"Stock not found: {stock_input}"}
+    
+    stock_code, stock_info, market = result
 
     stock_name = stock_info.get("zwjc", stock_code)
     org_id = stock_info.get("orgId", "")

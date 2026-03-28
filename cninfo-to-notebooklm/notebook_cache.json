@@ -24,12 +24,6 @@
       "notebook_title": "贵研铂业 财务报告",
       "updated_at": "2026-03-15 23:11:22"
     },
-    "00700": {
-      "stock_name": "腾讯控股",
-      "notebook_id": "bc74d77a-4bc0-4c99-81bf-b1fccc4e0113",
-      "notebook_title": "腾讯控股 财务报告",
-      "updated_at": "2026-03-15 23:56:00"
-    },
     "09988": {
       "stock_name": "阿里巴巴-SW",
       "notebook_id": "190fa7f8-3c78-4b97-af2f-864e2f70ce6a",
@@ -131,24 +125,6 @@
       "notebook_id": "f1cd8a79-558c-46f4-ac75-429f6629cbd5",
       "notebook_title": "华兰疫苗 财务报告",
       "updated_at": "2026-03-20 08:22:43"
-    },
-    "688339": {
-      "stock_name": "亿华通",
-      "notebook_id": "355c3277-ee90-4e56-915a-19f0ce8c24cc",
-      "notebook_title": "亿华通 财务报告",
-      "updated_at": "2026-03-20 08:25:51"
-    },
-    "600361": {
-      "stock_name": "创新新材",
-      "notebook_id": "9dac0c7d-51ee-4d07-bace-f1397ec3f8b6",
-      "notebook_title": "创新新材 财务报告",
-      "updated_at": "2026-03-20 08:25:53"
-    },
-    "002254": {
-      "stock_name": "泰和新材",
-      "notebook_id": "fd3afef6-e299-45a7-bd17-9e6d423fc160",
-      "notebook_title": "泰和新材 财务报告",
-      "updated_at": "2026-03-21 09:03:25"
     },
     "002746": {
       "stock_name": "仙坛股份",
@@ -257,6 +233,276 @@
       "notebook_id": "53608c98-9781-421b-93d3-6e1a342b46d9",
       "notebook_title": "招商银行 财务报告",
       "updated_at": "2026-03-22 10:56:41"
+    },
+    "豪威集团": {
+      "stock_name": "豪威集团",
+      "notebook_id": "355b843d-dd86-4952-941b-419503245a06",
+      "notebook_title": "豪威集团 财务报告",
+      "updated_at": "2026-03-22 11:14:25"
+    },
+    "603501": {
+      "stock_name": "韦尔股份",
+      "notebook_id": "cf2b4f17-d0f7-4403-8f2e-504a7e4092f0",
+      "notebook_title": "韦尔股份 财务报告",
+      "updated_at": "2026-03-22 11:20:24"
+    },
+    "603345": {
+      "stock_name": "安井食品",
+      "notebook_id": "3e633df3-b884-4870-bac3-744ff0d57c74",
+      "notebook_title": "安井食品 财务报告",
+      "updated_at": "2026-03-22 13:38:21"
+    },
+    "603027": {
+      "stock_name": "千禾味业",
+      "notebook_id": "cca40462-9036-4a6e-b46f-e0c1df5c0787",
+      "notebook_title": "千禾味业 财务报告",
+      "updated_at": "2026-03-22 13:45:12"
+    },
+    "000733": {
+      "stock_name": "振华科技",
+      "notebook_id": "3b93159b-8136-43b0-a725-6ac9c9f514e3",
+      "notebook_title": "振华科技 财务报告",
+      "updated_at": "2026-03-22 18:03:18"
+    },
+    "002908": {
+      "stock_name": "德生科技",
+      "notebook_id": "3c6aeeb8-42db-42a9-b7b6-78ba77538ced",
+      "notebook_title": "德生科技 财务报告",
+      "updated_at": "2026-03-22 18:14:55"
+    },
+    "300769": {
+      "stock_name": "德方纳米",
+      "notebook_id": "00b8735f-deb0-46e8-b506-1f5c757035f6",
+      "notebook_title": "德方纳米 财务报告",
+      "updated_at": "2026-03-22 18:26:15"
+    },
+    "002216": {
+      "stock_name": "三全食品",
+      "notebook_id": "4a3fe21f-5056-4132-8905-177f8096d1d2",
+      "notebook_title": "三全食品 财务报告",
+      "updated_at": "2026-03-23 22:04:00"
+    },
+    "300861": {
+      "stock_name": "美畅股份",
+      "notebook_id": "83d1a70f-59e0-4a8d-b2be-f0dd103e4773",
+      "notebook_title": "美畅股份 财务报告",
+      "updated_at": "2026-03-23 22:12:15"
+    },
+    "600361": {
+      "stock_name": "创新新材",
+      "notebook_id": "9883f9c7-2d69-4c98-ba07-0f47301f2cc0",
+      "notebook_title": "创新新材 财务报告",
+      "updated_at": "2026-03-23 22:16:11"
+    },
+    "600867": {
+      "stock_name": "通化东宝",
+      "notebook_id": "13499c92-a213-42e8-bda8-5aaf4ddf33cf",
+      "notebook_title": "通化东宝 财务报告",
+      "updated_at": "2026-03-23 22:29:38"
+    },
+    "002677": {
+      "stock_name": "浙江美大",
+      "notebook_id": "700446a6-7d5d-4823-9b2b-bfb215c76ded",
+      "notebook_title": "浙江美大 财务报告",
+      "updated_at": "2026-03-23 22:39:52"
+    },
+    "600739": {
+      "stock_name": "辽宁成大",
+      "notebook_id": "7787412e-5365-4436-a609-6616791116f5",
+      "notebook_title": "辽宁成大 财务报告",
+      "updated_at": "2026-03-23 22:43:35"
+    },
+    "603233": {
+      "stock_name": "大参林",
+      "notebook_id": "a2e70b1d-6e2b-4bab-beda-4d7d9fd3a9c1",
+      "notebook_title": "大参林 财务报告",
+      "updated_at": "2026-03-23 22:57:13"
+    },
+    "603317": {
+      "stock_name": "天味食品",
+      "notebook_id": "69fd6616-6a6d-4be1-b4bb-da50dac955ca",
+      "notebook_title": "天味食品 财务报告",
+      "updated_at": "2026-03-23 23:00:20"
+    },
+    "688339": {
+      "stock_name": "亿华通",
+      "notebook_id": "bd1f808f-f68f-4d72-bef9-6fb1adb59d7c",
+      "notebook_title": "亿华通 财务报告",
+      "updated_at": "2026-03-23 23:05:16"
+    },
+    "002176": {
+      "stock_name": "江特电机",
+      "notebook_id": "48af6363-1cf5-42f6-a79e-056651b4d35a",
+      "notebook_title": "江特电机 财务报告",
+      "updated_at": "2026-03-23 23:10:28"
+    },
+    "601888": {
+      "stock_name": "中国中免",
+      "notebook_id": "f6b44e55-7d31-43db-94af-d03f54ca4f32",
+      "notebook_title": "中国中免 财务报告",
+      "updated_at": "2026-03-23 23:16:29"
+    },
+    "300146": {
+      "stock_name": "汤臣倍健",
+      "notebook_id": "a490af58-0ddd-42d2-9931-056dba55bd13",
+      "notebook_title": "汤臣倍健 财务报告",
+      "updated_at": "2026-03-23 23:28:14"
+    },
+    "300142": {
+      "stock_name": "沃森生物",
+      "notebook_id": "721b5d67-f701-43af-91b2-783fc6e22f24",
+      "notebook_title": "沃森生物 财务报告",
+      "updated_at": "2026-03-24 21:44:12"
+    },
+    "300171": {
+      "stock_name": "东富龙",
+      "notebook_id": "46e03969-89aa-4b61-b2ff-4d8adcafab34",
+      "notebook_title": "东富龙 财务报告",
+      "updated_at": "2026-03-24 21:52:33"
+    },
+    "600416": {
+      "stock_name": "湘电股份",
+      "notebook_id": "2d26981d-edd9-405c-8381-94c4efcc6131",
+      "notebook_title": "湘电股份 财务报告",
+      "updated_at": "2026-03-24 22:11:04"
+    },
+    "603305": {
+      "stock_name": "旭升集团",
+      "notebook_id": "2ecf3894-d92a-4e03-aa43-9d2fa0b8656d",
+      "notebook_title": "旭升集团 财务报告",
+      "updated_at": "2026-03-24 22:21:12"
+    },
+    "603313": {
+      "stock_name": "梦百合",
+      "notebook_id": "a0d8c3a5-25dd-4a10-a10f-fef7b1769465",
+      "notebook_title": "梦百合 财务报告",
+      "updated_at": "2026-03-24 22:26:19"
+    },
+    "002876": {
+      "stock_name": "三利谱",
+      "notebook_id": "77c333ed-4a59-4eb7-b51e-aa69be56f7cc",
+      "notebook_title": "三利谱 财务报告",
+      "updated_at": "2026-03-25 21:37:43"
+    },
+    "605567": {
+      "stock_name": "春雪食品",
+      "notebook_id": "2a958ea6-60ba-455f-a0f9-c60b83c504d9",
+      "notebook_title": "春雪食品 财务报告",
+      "updated_at": "2026-03-25 21:46:59"
+    },
+    "688357": {
+      "stock_name": "建龙微纳",
+      "notebook_id": "d1745008-b38e-4ed7-a362-e1ff742c454e",
+      "notebook_title": "建龙微纳 财务报告",
+      "updated_at": "2026-03-25 21:47:14"
+    },
+    "603639": {
+      "stock_name": "海利尔",
+      "notebook_id": "bed32271-4cda-4883-a07b-3634542a45a9",
+      "notebook_title": "海利尔 财务报告",
+      "updated_at": "2026-03-25 22:20:54"
+    },
+    "002356": {
+      "stock_name": "赫美集团",
+      "notebook_id": "6167cedd-e6f9-4e08-878f-37ead8d0afe6",
+      "notebook_title": "赫美集团 财务报告",
+      "updated_at": "2026-03-25 22:26:16"
+    },
+    "002254": {
+      "stock_name": "泰和新材",
+      "notebook_id": "380ec532-0220-45c9-a7a6-b9baba28059a",
+      "notebook_title": "泰和新材 财务报告",
+      "updated_at": "2026-03-26 22:30:00"
+    },
+    "300496": {
+      "stock_name": "中科创达",
+      "notebook_id": "89099c02-eefa-411c-8cfc-17e1db603226",
+      "notebook_title": "中科创达 财务报告",
+      "updated_at": "2026-03-26 22:38:39"
+    },
+    "00700": {
+      "stock_name": "腾讯控股",
+      "notebook_id": "9af0b91b-afad-4e23-8fb2-a0cd9a8bd56e",
+      "notebook_title": "腾讯控股 财务报告",
+      "updated_at": "2026-03-27 07:51:00"
+    },
+    "600127": {
+      "stock_name": "金健米业",
+      "notebook_id": "27471669-1695-439f-ae81-00dd0bb9cee0",
+      "notebook_title": "金健米业 财务报告",
+      "updated_at": "2026-03-27 20:59:23"
+    },
+    "688217": {
+      "stock_name": "睿昂基因",
+      "notebook_id": "4ff83c91-1df4-41b8-b686-31d10c533581",
+      "notebook_title": "睿昂基因 财务报告",
+      "updated_at": "2026-03-27 21:07:45"
+    },
+    "688383": {
+      "stock_name": "新益昌",
+      "notebook_id": "2179d946-3c54-453d-b6ae-13a96b923e7b",
+      "notebook_title": "新益昌 财务报告",
+      "updated_at": "2026-03-27 21:11:39"
+    },
+    "603688": {
+      "stock_name": "石英股份",
+      "notebook_id": "aedb6447-07f8-454f-b09e-dd01b21eeb68",
+      "notebook_title": "石英股份 财务报告",
+      "updated_at": "2026-03-28 19:55:52"
+    },
+    "02319": {
+      "stock_name": "蒙牛乳业",
+      "notebook_id": "c33ca0ac-295a-41c5-b7c3-85c5d68b20a4",
+      "notebook_title": "蒙牛乳业 财务报告",
+      "updated_at": "2026-03-28 19:59:28"
+    },
+    "02331": {
+      "stock_name": "李宁",
+      "notebook_id": "649c86d7-0dde-4eba-a972-f256398299ce",
+      "notebook_title": "李宁 财务报告",
+      "updated_at": "2026-03-28 20:11:20"
+    },
+    "00656": {
+      "stock_name": "复星国际",
+      "notebook_id": "1a1b981a-fa2f-42a3-b68d-1c10b465d4f0",
+      "notebook_title": "复星国际 财务报告",
+      "updated_at": "2026-03-28 20:14:48"
+    },
+    "600765": {
+      "stock_name": "中航重机",
+      "notebook_id": "7a413e8e-461d-40fd-b1aa-5324e0c81ee3",
+      "notebook_title": "中航重机 财务报告",
+      "updated_at": "2026-03-28 20:16:24"
+    },
+    "002459": {
+      "stock_name": "晶澳科技",
+      "notebook_id": "b69f3caf-9bbc-4f6b-9e24-621c2bd6f2ad",
+      "notebook_title": "晶澳科技 财务报告",
+      "updated_at": "2026-03-28 20:23:47"
+    },
+    "002410": {
+      "stock_name": "广联达",
+      "notebook_id": "a94d6199-28de-499a-826c-06dc1ab59043",
+      "notebook_title": "广联达 财务报告",
+      "updated_at": "2026-03-28 20:27:39"
+    },
+    "00968": {
+      "stock_name": "信义光能",
+      "notebook_id": "99867e9f-77a0-4789-977b-ff1eadab31ad",
+      "notebook_title": "信义光能 财务报告",
+      "updated_at": "2026-03-28 20:32:07"
+    },
+    "600745": {
+      "stock_name": "闻泰科技",
+      "notebook_id": "f0228a06-1902-4808-8787-c7760efa2458",
+      "notebook_title": "闻泰科技 财务报告",
+      "updated_at": "2026-03-28 20:34:52"
+    },
+    "002129": {
+      "stock_name": "TCL中环",
+      "notebook_id": "4e0cad1d-fe2a-452d-b3ca-77e6f2e09d76",
+      "notebook_title": "TCL中环 财务报告",
+      "updated_at": "2026-03-28 20:40:40"
     }
   }
 }

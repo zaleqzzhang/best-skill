@@ -37,18 +37,59 @@ class CnInfoDownloader:
         return {}
 
     def find_stock(self, stock_input: str) -> tuple:
+        """Find stock by code or name.
+        
+        Args:
+            stock_input: Stock code (e.g., "000001") or name (e.g., "平安银行")
+            
+        Returns:
+            Tuple of (stock_code, stock_info, market) or None if not found
+            
+        Note:
+            For Hong Kong stocks with 5-digit codes starting with 00/01/02/09,
+            returns the code directly since they may not be in stocks.json.
+        """
+        # 1. Exact match by stock code
         for market in ["szse", "hke"]:
             stocks = self.market_to_stocks.get(market, {})
             if stock_input in stocks:
                 return stock_input, stocks[stock_input], market
+        
+        # 2. Match by Chinese name (contains) or pinyin (exact)
         for market in ["szse", "hke"]:
             stocks = self.market_to_stocks.get(market, {})
             for code, info in stocks.items():
-                if stock_input in info.get("zwjc", "") or stock_input.lower() == info.get("pinyin", "").lower():
+                zwjc = info.get("zwjc", "")
+                pinyin = info.get("pinyin", "")
+                # Exact name match
+                if stock_input == zwjc:
                     return code, info, market
+                # Partial name match (stock_input is substring of name)
+                if stock_input in zwjc:
+                    return code, info, market
+                # Pinyin match (case insensitive)
+                if stock_input.lower() == pinyin.lower():
+                    return code, info, market
+        
+        # 3. Hong Kong stock code pattern (5-digit starting with 00/01/02/09)
+        # These may not be in stocks.json, so we accept them directly
         if len(stock_input) == 5 and stock_input.startswith(("00", "01", "02", "09")):
             return stock_input, {"zwjc": stock_input}, "hke"
-        return stock_input, {"zwjc": stock_input}, "szse"
+        
+        # 4. A-share code pattern (6-digit)
+        # Validate it looks like a real stock code
+        if len(stock_input) == 6 and stock_input.isdigit():
+            # It's a valid code format, try to use it
+            # Determine market by code prefix
+            if stock_input.startswith("6"):
+                return stock_input, {"zwjc": stock_input}, "sse"
+            elif stock_input.startswith(("0", "3")):
+                return stock_input, {"zwjc": stock_input}, "szse"
+            elif stock_input.startswith(("4", "8")):
+                return stock_input, {"zwjc": stock_input}, "bse"
+        
+        # 5. Not found - return None instead of invalid fallback
+        return None
 
     def _get_exchange_info(self, stock_code: str) -> tuple:
         """Get column and plate based on stock code"""
