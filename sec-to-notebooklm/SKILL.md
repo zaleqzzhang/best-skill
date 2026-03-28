@@ -51,7 +51,52 @@ python3 scripts/notebooklm_uploader.py --manifest ./sec_reports/AAPL/manifest.js
 1. **搜索公司**：通过 `company_tickers.json` 精确匹配 Ticker → 获取 CIK
 2. **获取报告列表**：调用 `submissions/CIK{}.json` 获取最近 N 份报告
 3. **下载文件**：下载主文档（.htm/.txt/.pdf），保存到 `./sec_reports/{TICKER}/`，生成 `manifest.json`
-4. **上传 NotebookLM**：使用 Playwright 打开浏览器，登录 Google，创建/选择笔记本，逐一上传文件
+4. **转换格式**：将 HTML 转换为 PDF（WeasyPrint），优化文件大小
+5. **配置笔记本**：设置 custom prompt（SEC 财报分析师）
+6. **上传 NotebookLM**：使用 NotebookLM CLI 上传 PDF 文件
+
+## Custom Prompt 配置
+
+### 默认配置
+
+每次创建笔记本时，会自动配置 **SEC 财报深度分析师** prompt，包含：
+
+- ✅ SEC 财报文件类型解读（10-K、10-Q、8-K、DEF 14A）
+- ✅ 财务报表分析框架（资产负债表、利润表、现金流量表）
+- ✅ AI 业务价值分析（收入贡献、投资回报、商业化评估）
+- ✅ 估值分析框架（PE、DCF、安全边际计算）
+- ✅ 风险因素识别（从 10-K Item 1A 提取）
+- ✅ MD&A 深度解读（管理层讨论与分析）
+- ✅ 竞争格局分析（同行业对比、护城河评估）
+- ✅ 完整分析报告模板
+
+Prompt 文件位置：`assets/sec_analyst_prompt.txt`
+
+### 自定义 Prompt
+
+```bash
+# 使用自定义 prompt
+python3 scripts/upload_sec_to_notebooklm.py \
+  --manifest ./sec_reports/MSFT/manifest.json \
+  --prompt ./my_custom_prompt.txt
+
+# 跳过配置（不设置 custom prompt）
+python3 scripts/upload_sec_to_notebooklm.py \
+  --manifest ./sec_reports/MSFT/manifest.json \
+  --no-configure
+```
+
+### 配置现有笔记本
+
+如果笔记本已存在，可以单独配置 custom prompt：
+
+```bash
+# 使用 notebooklm CLI 直接配置
+notebooklm configure \
+  --notebook 0dcf32ad-7dd5-4106-b320-f7ee3a2ce949 \
+  --persona "$(cat assets/sec_analyst_prompt.txt)" \
+  --response-length longer
+```
 
 ## NotebookLM 登录说明
 

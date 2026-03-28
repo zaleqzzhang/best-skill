@@ -114,7 +114,13 @@ def main():
     if args.no_headless:
         upload_args.append("--no-headless")
 
-    rc, _ = run_script(str(scripts_dir / "notebooklm_uploader.py"), upload_args)
+    # 使用 V2 上传器（支持笔记本复用）
+    uploader_script = scripts_dir / "notebooklm_uploader_v2.py"
+    if not uploader_script.exists():
+        # 降级到 V1
+        uploader_script = scripts_dir / "notebooklm_uploader.py"
+    
+    rc, _ = run_script(str(uploader_script), upload_args)
     if rc != 0:
         print(f"\n⚠️  上传过程中出现问题（exit code: {rc}）")
         print(f"📁 文件已保存至: {Path(args.output) / ticker_safe}")
