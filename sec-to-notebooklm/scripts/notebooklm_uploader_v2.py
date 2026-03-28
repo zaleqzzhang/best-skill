@@ -168,39 +168,65 @@ def get_existing_sources(notebook_id: str) -> set:
         return existing
     
     # 解析来源列表
+    # 输出格式：│ ID │ Title │ Type │ Created │ Status │
     for line in output.split("\n"):
         line = line.strip()
         if not line or not line.startswith("│"):
             continue
+        # 跳过表头和分隔线
         if "ID" in line and "Title" in line:
             continue
         
         parts = line.split("│")
         if len(parts) >= 3:
             title = parts[2].strip()
+            # 移除末尾的省略号
+            if title.endswith("…"):
+                title = title[:-1]
             existing.add(title)
     
     return existing
 
 
-def upload_source(notebook_id: str, file_path: str, skip_existing: bool = True) -> bool:
-    """上传来源文件"""
+def upload_source(notebook_id: str, file_path: str, existing_sources: set = None) -> bool:
+    """上传来源文件
+    
+    Args:
+        notebook_id: 笔记本 ID
+        file_path: 文件路径
+        existing_sources: 已存在的来源集合（避免重复查询）
+    
+    Returns:
+        True 如果上传成功或已存在，False 如果失败
+    """
     file_name = Path(file_path).name
     
+    # 检查是否已存在（使用宽松匹配）
+    if existing_sources is None:
+        existing_sources = get_existing_sources(notebook_id)
+    
+    # 提取文件名关键部分（去除 .pdf 后缀）
+    file_base = file_name.replace('.pdf', '').replace('.PDF', '')
+    
     # 检查是否已存在
-    if skip_existing:
-        existing = get_existing_sources(notebook_id)
-        # 使用文件名匹配（可能被截断）
-        for existing_name in existing:
-            if file_name[:30] in existing_name or existing_name[:30] in file_name:
-                print(f"⏭️  Already exists: {file_name}")
-                return True
+    for existing_name in existing_sources:
+        existing_base = existing_name.replace('.pdf', '').replace('.PDF', '')
+        # 完全匹配或包含关系
+        if file_base == existing_base or file_base in existing_base or existing_base in file_base:
+            print(f"⏭️  Already exists: {file_name}")
+            return True
     
     print(f"📤 Uploading: {file_name}")
     success, output = run_notebooklm_command(["source", "add", file_path])
     
-    if success:
+    if success and "Added source" in output:
         print(f"✅ Uploaded: {file_name}")
+        # 添加到已存在集合
+        if existing_sources is not None:
+            existing_sources.add(file_name)
+        return True
+    elif "already exists" in output.lower():
+        print(f"⏭️  Already exists: {file_name}")
         return True
     else:
         print(f"❌ Failed to upload {file_name}: {output}")
@@ -255,7 +281,18 @@ def main():
     with open(manifest_path) as f:
         manifest = json.load(f)
     
-    ticker = manifest.get("ticker", "UNKNOWN") or manifest.get("company", {}).get("ticker", "UNKNOWN")
+    # 从 manifest 或命令行参数获取 ticker
+    ticker = manifest.get("ticker") or manifest.get("company", {}).get("ticker")
+    
+    # 如果 manifest 中没有 ticker，从 notebook 名称提取
+    if not ticker:
+        import re
+        match = re.search(r'^([A-Z]+)\s+SEC\s+Reports', args.notebook)
+        if match:
+            ticker = match.group(1)
+        else:
+            ticker = "UNKNOWN"
+    
     files = manifest.get("files", [])
     
     # 将 HTML 文件路径转换为 PDF 文件路径
@@ -311,12 +348,17 @@ def main():
         print(f"❌ Failed to switch to notebook")
         sys.exit(1)
     
+    # 预先获取已存在的来源（避免每次上传都查询）
+    print(f"\n🔍 Checking existing sources...")
+    existing_sources = get_existing_sources(notebook_id)
+    print(f"📋 Found {len(existing_sources)} existing sources")
+    
     # 上传文件
     print(f"\n📤 Uploading {len(files)} files...")
     success_count = 0
     
     for file_path in files:
-        if upload_source(notebook_id, file_path, args.skip_existing):
+        if upload_source(notebook_id, file_path, existing_sources):
             success_count += 1
     
     print(f"\n{'=' * 60}")

@@ -94,9 +94,22 @@ def main():
     print(f"\n✅ 步骤 1 完成，共下载 {len(downloaded_files)} 个文件")
 
     if args.download_only:
-        print("\n📌 --download-only 模式，跳过上传步骤")
+        print("\n📌 --download-only 模式，跳过转换和上传步骤")
         print(f"📁 文件保存在: {Path(args.output) / ticker_safe}")
         return
+
+    # ── 步骤 1.5：转换为 PDF ────────────────────────────────────────
+    print("\n" + "=" * 60)
+    print(f"  步骤 1.5/2  转换 HTML 为 PDF")
+    print("=" * 60)
+
+    input_dir = Path(args.output) / ticker_safe
+    rc, _ = run_script(str(scripts_dir / "html_to_pdf.py"), [str(input_dir)])
+    
+    if rc != 0:
+        print(f"\n⚠️ PDF 转换失败（exit code: {rc}），继续尝试上传...")
+    else:
+        print(f"\n✅ PDF 转换完成")
 
     # ── 步骤 2：上传到 NotebookLM ─────────────────────────────────────
     print("\n" + "=" * 60)
