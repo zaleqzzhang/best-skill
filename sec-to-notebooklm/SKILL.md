@@ -88,15 +88,22 @@ python3 scripts/upload_sec_to_notebooklm.py \
 
 ### 配置现有笔记本
 
+> ⚠️ **重要提醒**：配置 custom prompt 时，必须使用完整的提示词文件内容，不能使用简化的名称！
+
 如果笔记本已存在，可以单独配置 custom prompt：
 
 ```bash
-# 使用 notebooklm CLI 直接配置
+# ✅ 正确方法：使用完整的提示词文件内容
 notebooklm configure \
   --notebook 0dcf32ad-7dd5-4106-b320-f7ee3a2ce949 \
   --persona "$(cat assets/sec_analyst_prompt.txt)" \
   --response-length longer
+
+# ❌ 错误方法：使用简化的名称
+# notebooklm configure --notebook {id} --persona "SEC 分析师"
 ```
+
+> 📖 **详细说明**：参见 [NOTEBOOKLM_CONFIGURATION_GUIDE.md](./NOTEBOOKLM_CONFIGURATION_GUIDE.md)
 
 ## NotebookLM 登录说明
 
