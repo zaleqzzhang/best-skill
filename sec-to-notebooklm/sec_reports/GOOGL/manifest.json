@@ -1,0 +1,30 @@
+{
+  "company": {
+    "cik": "0001652044",
+    "name": "Alphabet Inc.",
+    "ticker": "GOOGL"
+  },
+  "tasks": [
+    "近10年年报 10-K（2016～2026）",
+    "最近1年季报 10-Q（2025～2026）",
+    "最近1年股东大会代理说明书 DEF 14A（2025～2026）"
+  ],
+  "downloaded_at": "2026-03-28T16:35:08.599215",
+  "files": [
+    "sec_reports/GOOGL/10-K_2026-02-05_goog-20251231.htm",
+    "sec_reports/GOOGL/10-K_2025-02-05_goog-20241231.htm",
+    "sec_reports/GOOGL/10-K_2024-01-31_goog-20231231.htm",
+    "sec_reports/GOOGL/10-K_2023-02-03_goog-20221231.htm",
+    "sec_reports/GOOGL/10-K_2022-02-02_goog-20211231.htm",
+    "sec_reports/GOOGL/10-K_2021-02-03_goog-20201231.htm",
+    "sec_reports/GOOGL/10-K_2020-02-04_goog10-k2019.htm",
+    "sec_reports/GOOGL/10-K_2019-02-05_goog10-kq42018.htm",
+    "sec_reports/GOOGL/10-K_2018-02-06_goog10-kq42017.htm",
+    "sec_reports/GOOGL/10-K_2017-02-03_goog10-kq42016.htm",
+    "sec_reports/GOOGL/10-K_2016-02-11_goog10-k2015.htm",
+    "sec_reports/GOOGL/10-Q_2025-10-30_goog-20250930.htm",
+    "sec_reports/GOOGL/10-Q_2025-07-24_goog-20250630.htm",
+    "sec_reports/GOOGL/10-Q_2025-04-25_goog-20250331.htm",
+    "sec_reports/GOOGL/DEF_14A_2025-04-25_goog012701-def14a.htm"
+  ]
+}
