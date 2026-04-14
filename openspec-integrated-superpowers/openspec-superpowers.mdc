@@ -1,0 +1,42 @@
+---
+description: OpenSpec 工作流核心触发规则。检测到命令(支持多格式变体)后立即调用 openspec-integrated-superpowers 技能，严格按阶段执行并强制遵守核心约束。
+alwaysApply: true
+enabled: true
+updatedAt: 2026-03-12T00:00:00.000Z
+provider: 
+---
+
+# OpenSpec + Superpowers 集成工作流【强制】
+
+## 命令触发
+
+**检测到以下关键字(支持格式变体 `/`、`@command://`、`@command:`)时：**
+
+- `opsx:propose` 或 `openspec:proposal` → 立即调用 `openspec-integrated-superpowers` 技能(Phase 1 + 1.5 + 2)
+- `opsx:apply` 或 `openspec:apply` → 立即调用 `openspec-integrated-superpowers` 技能(Phase 3)
+
+**严格按技能规范执行**，禁止凭记忆跳步。
+
+## 核心约束【违反立即停止】
+
+| 阶段 | 必须遵守 |
+|------|---------|
+| **Phase 1** | ❌ 禁止创建文件 ❌ 禁止跳过 brainstorming ❌ 禁止未经确认进入下阶段 |
+| **Phase 1.5** | ✅ 必须验证 worktree 环境 ✅ 必须按顺序 1→1.5→2 |
+| **Phase 2** | ❌ 禁止用 writing-plans ❌ 禁止凭记忆生成文档 ✅ 必须在 openspec/changes/ 下创建 |
+| **Phase 3** | ✅ 必须停等用户选 execution_mode ✅ 必须按步骤执行 ✅ 任务后必须代码审查+验证技能 |
+
+**违规时立即停止并输出违规消息，等待用户指令。详见技能文档。**
+
+## 项目配置
+
+execution_mode: agent    # agent(简单任务) | subagent(复杂任务+审查)
+review_mode: per_task    # per_task(每任务审查) | final(最终统一审查)
+review_action: confirm   # confirm(停等用户) | auto(自动修复)
+
+## 扩展配置
+
+skip_preci: false          # true 时跳过 PreCI 检查
+skip_worktree_check: false # true 时跳过 worktree 检查
+max_auto_fix_rounds: 3     # PreCI 自动修正最大重试次数(1-10)
+tdd_strict: true           # false 时允许非 TDD 任务跳过验证
