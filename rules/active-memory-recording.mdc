@@ -1,0 +1,178 @@
+---
+description: AI 主动记忆读写规则（双通道机制）。通道1-显式命令：/memory:remember（AI自主分类）、/memory:remember-long（强制长期）、/memory:remember-daily（强制当日）。通道2-自主判断：AI根据对话内容自主写入。查询：/memory:memory-list。整理：/memory:tidy。严禁使用 update_memory 工具。
+alwaysApply: true
+enabled: true
+updatedAt: 2026-03-12T10:00:00.000Z
+provider: 
+---
+
+# AI 主动记忆规则（双通道机制）
+
+## 核心架构
+
+```
+通道 1（显式写入）:
+  /memory:remember       → AI 自主分类 → 写入日志/长期记忆/双写
+  /memory:remember-long  → 强制写入长期记忆 + 同步当日日志
+  /memory:remember-daily → 强制只写当日日志
+通道 2（自主写入）:
+  AI 根据对话内容自主判断 → 自动写入日志/长期记忆
+辅助命令:
+  /memory:memory-list    → 查看当前记忆内容
+  /memory:tidy           → 整理优化记忆文件（晋升/精简/清理）
+
+优先级: 通道 1 > 通道 2（显式命令的写入必须优先于回复文本生成）
+```
+
+---
+
+## 一、读取时机与策略【CRITICAL - 响应前强制检查】
+
+**🔴 执行检查点**（每次响应用户前必须执行）:
+```
+STEP 1: 扫描用户消息，是否包含以下任一信号？
+  - "之前/上次/继续/还记得/讨论过"
+  - "按之前/约定/标准/规范"
+  - 新会话首条消息（非闲聊）
+  → YES: 立即执行 STEP 2
+  → NO: 跳过读取，继续任务
+
+STEP 2: 读取记忆文件（按顺序执行）
+  1. read_file(".codebuddy/MEMORY.md")
+  2. read_file(".codebuddy/memory/<今天>.md")
+  3. read_file(".codebuddy/memory/<昨天>.md")
+  4. 如需更多上下文：继续读取最近 7 天的日志文件
+```
+
+**读取原则**: 只读取相关部分，将关键上下文融入回答（不逐条复述）
+
+---
+
+## 二、通道 1 — 显式命令写入【CRITICAL - 最高优先级】
+
+用户通过以下命令显式提交记忆内容时，**写入动作必须在回复文本之前完成**:
+
+| 命令 | 写入目标 | 说明 |
+|------|---------|------|
+| `/memory:remember <内容>` | AI 自主分类 | 根据内容性质决定写入日志/长期记忆/双写 |
+| `/memory:remember-long <内容>` | 长期记忆 | 强制写入 `.codebuddy/MEMORY.md` + 同步当日日志 |
+| `/memory:remember-daily <内容>` | 当日日志 | 强制只写 `.codebuddy/memory/YYYY-MM-DD.md` |
+
+### 分类判断（/memory:remember 使用）
+```
+核心问题："下次全新会话是否仍需要这条信息？"
+  → YES（偏好/约定/决策/否决/架构认知）→ 双写（长期 + 日志）
+  → NO（进度/过程/改动/临时/调试/待办）→ 仅当日日志
+```
+
+### 执行约束【CRITICAL - 强制技能调用】
+
+**适用命令**: `/memory:remember*` 和 `/memory:tidy*`
+
+```
+1. 识别到 /memory:remember* 或 /memory:tidy* 命令
+2. 【必须】立即调用 active-memory 技能：use_skill("active-memory")
+3. 【必须】读取技能规范文件：
+   
+   ▸ /memory:remember* 命令：
+     - classify-flow.md（分类判断）
+     - write-flow.md（写入流程和格式规范）
+     - examples.md（格式示例，首次或不确定时）
+   
+   ▸ /memory:tidy 命令：
+     - write-flow.md（日志晋升流程和格式规范）
+     - classify-flow.md（晋升判断标准）
+     - examples.md（格式示例）
+
+4. 【必须】严格按技能规范执行操作（read_file + replace_in_file / write_to_file）
+5. 【然后】生成回复文本，确认执行结果
+6. 操作失败时必须告知用户并重试
+
+**可靠性保证**: 每次执行都调用技能，避免多轮会话中规范遗忘风险
+**规范来源**: active-memory 技能是唯一权威，命令文件不重复定义流程
+```
+
+### 与通道 2 的协同
+```
+场景: 用户使用 /memory:remember 写入了内容，AI 在同一轮对话中又产生了新结论
+处理: 两者都写入，不冲突。显式内容按用户原文写入，自主判断内容另起条目。
+```
+
+---
+
+## 三、通道 2 — 自主判断写入【CRITICAL - 任务完成强制检查】
+
+**🔴 执行检查点**（以下任一发生时立即记录，不等用户催促）:
+
+### 触发器（自动记录到当日日志）
+```
+用户说"可以/就这样/确认" → 立即记录确认的方案
+用户说"不行/换方案/否决" → 立即记录 ❌ 标记的方案
+完成代码修改（>20 行）→ 立即记录变更摘要
+得出结论（分析/架构理解）→ 立即记录结论
+用户说"记一下" → 立即记录并告知路径
+```
+
+### 长期记忆写入条件（写入到 MEMORY.md）
+```
+判断标准：下次新会话是否仍需要？
+  → YES: 立即写入 MEMORY.md（用户偏好/项目约定/核心决策/否决记录）
+  → NO: 仅写入当日日志
+```
+
+---
+
+## 四、操作方式【CRITICAL - 工具使用强制约束】
+
+### 🚫 绝对禁止
+```
+❌ update_memory 工具 → 永远不使用
+✅ 仅使用: read_file + replace_in_file + write_to_file
+```
+
+### 标准流程（通道 1 和通道 2 共用）
+```
+写入当日日志:
+  1. read_file(".codebuddy/memory/YYYY-MM-DD.md")  // 不存在则跳过
+  2. replace_in_file 追加新内容（或 write_to_file 创建新文件）
+
+更新长期记忆:
+  1. read_file(".codebuddy/MEMORY.md")
+  2. 检查是否已有相关条目（避免重复，已有则更新）
+  3. replace_in_file 追加或更新条目
+```
+
+**首次操作必须先调用** `use_skill("active-memory")` 获取完整格式规范
+
+### 记录格式【精简优先】
+```
+当日日志（每条 ≤ 3 行）:
+## [主题] - [描述]
+- ✅/❌/⏳ 结论内容（一句话）
+
+长期记忆（每条 ≤ 100 字）:
+## [模块] - [决策] (YYYY-MM-DD)
+核心结论，一到两句话。
+```
+
+### 容量控制
+```
+单条日志记录: ≤ 3 行     | 超限 → 压缩为结论 + 状态标记
+单日日志文件: ≤ 50 行    | 超限 → 合并同主题条目
+MEMORY.md 单条目: ≤ 100 字 | 超限 → 精简为规则化表述
+MEMORY.md 总条目: ≤ 30 条  | 超限 → 使用 /memory:tidy --compact 整理
+```
+
+---
+
+## 五、响应前自检【每次回复前必须执行】
+
+```
+[ ] 检查 1: 用户消息包含 /memory:remember* 或 /memory:tidy* 命令？
+            → 已调用 active-memory 技能？
+            → 已读取必要的规范文件？
+[ ] 检查 2: 用户消息包含读取触发信号？→ 已读取记忆文件？
+[ ] 检查 3: 本次任务产生了确认/否决/结论？→ 已记录到日志？
+[ ] 检查 4: 使用了 update_memory？→ 立即停止并改用文件工具
+```
+
