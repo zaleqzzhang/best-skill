@@ -1,0 +1,141 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Single Product Design Tokens",
+  "description": "单个产品的设计令牌 schema。多产品架构下，每个产品对应一个独立的 JSON 文件（存储在 tokens/ 文件夹中），均遵循此 schema。",
+  "type": "object",
+  "properties": {
+    "meta": {
+      "type": "object",
+      "description": "元信息",
+      "properties": {
+        "product_name": {
+          "type": "string",
+          "description": "产品名称（用户告知或从参考图推断）"
+        },
+        "last_updated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "最后更新时间，ISO 8601 格式"
+        },
+        "source_count": {
+          "type": "integer",
+          "description": "已分析的参考图累计数量"
+        },
+        "notes": {
+          "type": "string",
+          "description": "用户补充的备注信息"
+        }
+      },
+      "required": ["last_updated", "source_count"]
+    },
+    "colors": {
+      "type": "object",
+      "description": "色彩系统",
+      "properties": {
+        "page_bg": { "type": "string", "description": "页面底色" },
+        "card_bg": { "type": "string", "description": "卡片/容器背景色" },
+        "primary": { "type": "string", "description": "品牌色/主操作色" },
+        "primary_hover": { "type": "string", "description": "品牌色悬停态" },
+        "primary_light": { "type": "string", "description": "品牌色浅色变体（用于背景/标签）" },
+        "text_primary": { "type": "string", "description": "文字主色" },
+        "text_secondary": { "type": "string", "description": "文字次要色" },
+        "text_placeholder": { "type": "string", "description": "文字辅助/占位色" },
+        "border": { "type": "string", "description": "边框色" },
+        "divider": { "type": "string", "description": "分割线色" },
+        "success": { "type": "string", "description": "成功状态色" },
+        "warning": { "type": "string", "description": "警告状态色" },
+        "error": { "type": "string", "description": "错误状态色" },
+        "info": { "type": "string", "description": "信息/进行中状态色" },
+        "disabled": { "type": "string", "description": "禁用/停用状态色" }
+      }
+    },
+    "typography": {
+      "type": "object",
+      "description": "字体规范",
+      "properties": {
+        "font_family": { "type": "string", "description": "字体族" },
+        "page_title": {
+          "type": "object",
+          "properties": {
+            "size": { "type": "string", "description": "字号，如 '20px'" },
+            "weight": { "type": "string", "description": "字重，如 '600'" },
+            "color": { "type": "string", "description": "颜色" }
+          }
+        },
+        "card_title": {
+          "type": "object",
+          "properties": {
+            "size": { "type": "string" },
+            "weight": { "type": "string" },
+            "color": { "type": "string" }
+          }
+        },
+        "body": {
+          "type": "object",
+          "properties": {
+            "size": { "type": "string" },
+            "weight": { "type": "string" },
+            "color": { "type": "string" }
+          }
+        },
+        "caption": {
+          "type": "object",
+          "properties": {
+            "size": { "type": "string" },
+            "weight": { "type": "string" },
+            "color": { "type": "string" }
+          }
+        },
+        "button": {
+          "type": "object",
+          "properties": {
+            "size": { "type": "string" },
+            "weight": { "type": "string" }
+          }
+        },
+        "line_height": { "type": "string", "description": "行高，如 '1.5'" }
+      }
+    },
+    "spacing": {
+      "type": "object",
+      "description": "间距系统",
+      "properties": {
+        "page_margin": { "type": "string", "description": "页面外边距" },
+        "card_padding": { "type": "string", "description": "卡片内边距" },
+        "component_gap": { "type": "string", "description": "组件间间距" },
+        "form_label_gap": { "type": "string", "description": "表单标签与输入框间距" },
+        "list_row_height": { "type": "string", "description": "列表行高" }
+      }
+    },
+    "border_radius": {
+      "type": "object",
+      "description": "圆角规范",
+      "properties": {
+        "button": { "type": "string" },
+        "card": { "type": "string" },
+        "input": { "type": "string" },
+        "tag": { "type": "string" },
+        "modal": { "type": "string" }
+      }
+    },
+    "shadows": {
+      "type": "object",
+      "description": "阴影规范",
+      "properties": {
+        "card": { "type": "string", "description": "卡片阴影，如 '0 2px 8px rgba(0,0,0,0.08)' 或 'none'" },
+        "modal": { "type": "string", "description": "弹窗阴影" }
+      }
+    },
+    "layout": {
+      "type": "object",
+      "description": "布局结构",
+      "properties": {
+        "type": { "type": "string", "description": "布局类型，如 '顶部导航 + 左侧菜单 + 内容区'" },
+        "sidebar_width": { "type": "string", "description": "左侧菜单宽度" },
+        "content_max_width": { "type": "string", "description": "内容区最大宽度" },
+        "grid": { "type": "string", "description": "栅格列数/间距" }
+      }
+    }
+  },
+  "required": ["meta", "colors"]
+}
