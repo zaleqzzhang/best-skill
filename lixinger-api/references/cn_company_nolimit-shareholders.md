@@ -1,0 +1,107 @@
+# API文档/大陆/公司接口/股东/前十大流通股东
+
+> Vibe Coding URL: https://www.lixinger.com/api/open-api/html-doc/cn/company/nolimit-shareholders
+> API Key: `cn/company/nolimit-shareholders`
+
+---
+
+## 前十大流通股东持股API
+
+**简要描述:** 获取前十大流通股东持股信息。
+
+**请求URL:** `https://open.lixinger.com/api/cn/company/nolimit-shareholders`
+
+**url for vibe coding:** [https://www.lixinger.com/api/open-api/html-doc/cn/company/nolimit-shareholders](https://www.lixinger.com/api/open-api/html-doc/cn/company/nolimit-shareholders)
+
+**请求方式:** POST
+
+**参数:**
+
+| 参数名称 | 必选 | 数据类型 | 说明 |
+| --- | --- | --- | --- |
+| token | Yes | String | 我的Token 页有用户专属且唯一的Token。 |
+| stockCode | Yes | String | 请参考股票信息API获取合法的stockCode。 |
+| startDate | Yes | String: YYYY-MM-DD (北京时间) | 信息起始时间。 用于获取一定时间范围内的数据。 **开始和结束的时间间隔不超过10年** |
+| endDate | No | String: YYYY-MM-DD (北京时间) | 信息结束时间。 用于获取一定时间范围内的数据。 默认值是上周一。 |
+| limit | No | Number | 返回最近数据的数量。 |
+
+**返回数据说明::**
+
+| 参数名称 | 数据类型 | 说明 |
+| --- | --- | --- |
+| date | Date | 数据时间 |
+| name | String | 姓名 |
+| holdings | Number | 持仓 |
+| property | String | 性质 |
+| outstandingSharesA | Number | 流通A股 |
+| proportionOfOutstandingSharesA | Number | 流通A股占比 |
+
+### 示例
+
+```json
+{
+    "startDate": "2025-03-20",
+    "endDate": "2026-03-20",
+    "stockCode": "300750",
+    "token": "***********"
+}
+```
+
+### 返回结果
+
+```json
+{
+    "code": 1,
+    "message": "success",
+    "data": [
+        {
+            "declarationDate": "2026-03-10T00:00:00+08:00",
+            "date": "2025-12-31T00:00:00+08:00",
+            "name": "厦门瑞庭投资有限公司",
+            "shareholderCategory": "其他机构",
+            "holdings": 1024704949,
+            "property": "流通A股",
+            "properties": [
+                "outstanding_shares_a"
+            ],
+            "shareholderCategories": [
+                "other_organisations"
+            ],
+            "outstandingSharesA": 4256573358,
+            "proportionOfOutstandingSharesA": 0.2407
+        },
+        {
+            "declarationDate": "2026-03-10T00:00:00+08:00",
+            "date": "2025-12-31T00:00:00+08:00",
+            "name": "香港中央结算有限公司",
+            "shareholderCategory": "其他机构",
+            "holdings": 692541784,
+            "property": "流通A股",
+            "properties": [
+                "outstanding_shares_a"
+            ],
+            "shareholderCategories": [
+                "other_organisations"
+            ],
+            "outstandingSharesA": 4256573358,
+            "proportionOfOutstandingSharesA": 0.1627
+        },
+        {
+            "declarationDate": "2026-03-10T00:00:00+08:00",
+            "date": "2025-12-31T00:00:00+08:00",
+            "name": "黄世霖",
+            "shareholderCategory": "自然人",
+            "holdings": 420388947,
+            "property": "流通A股",
+            "properties": [
+                "outstanding_shares_a"
+            ],
+            "shareholderCategories": [
+                "natural_person"
+            ],
+            "outstandingSharesA": 4256573358,
+            "proportionOfOutstandingSharesA": 0.0988
+        }
+    ]
+}
+```

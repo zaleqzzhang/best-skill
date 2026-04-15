@@ -1,0 +1,54 @@
+# API文档/大陆/基金接口/公募基金接口/拆分
+
+> Vibe Coding URL: https://www.lixinger.com/api/open-api/html-doc/cn/fund/split
+> API Key: `cn/fund/split`
+
+---
+
+## 拆分API
+
+**简要描述:** 获取拆分数据。
+
+**请求URL:** `https://open.lixinger.com/api/cn/fund/split`
+
+**url for vibe coding:** [https://www.lixinger.com/api/open-api/html-doc/cn/fund/split](https://www.lixinger.com/api/open-api/html-doc/cn/fund/split)
+
+**请求方式:** POST
+
+**参数:**
+
+| 参数名称 | 必选 | 数据类型 | 说明 |
+| --- | --- | --- | --- |
+| token | Yes | String | 我的Token 页有用户专属且唯一的Token。 |
+| stockCode | Yes | String | 请参考基金信息API获取合法的stockCode。 |
+| startDate | Yes | String: YYYY-MM-DD (北京时间) | 信息起始时间。 用于获取一定时间范围内的数据。 **开始和结束的时间间隔不超过10年** |
+| endDate | No | String: YYYY-MM-DD (北京时间) | 信息结束时间。 用于获取一定时间范围内的数据。 默认值是上周一。 |
+| limit | No | Number | 返回最近数据的数量。 |
+
+**返回数据说明::**
+
+| 参数名称 | 数据类型 | 说明 |
+| --- | --- | --- |
+| date | Date | 拆分折算日 |
+| splitRatio | Number | 拆分折算比例 |
+
+### 示例
+
+```json
+{
+    "startDate": "2021-03-20",
+    "endDate": "2026-03-20",
+    "stockCode": "161725",
+    "token": "***********"
+}
+```
+
+### 返回结果
+
+```json
+{
+    "code": 1,
+    "message": "success",
+    "data": []
+}
+```

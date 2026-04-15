@@ -1,0 +1,71 @@
+# API文档/香港/公司接口/股票所属行业
+
+> Vibe Coding URL: https://www.lixinger.com/api/open-api/html-doc/hk/company/industries
+> API Key: `hk/company/industries`
+
+---
+
+## 股票所属行业信息API
+
+**简要描述:** 获取股票所属行业信息。
+
+**请求URL:** `https://open.lixinger.com/api/hk/company/industries`
+
+**url for vibe coding:** [https://www.lixinger.com/api/open-api/html-doc/hk/company/industries](https://www.lixinger.com/api/open-api/html-doc/hk/company/industries)
+
+**请求方式:** POST
+
+**参数:**
+
+| 参数名称 | 必选 | 数据类型 | 说明 |
+| --- | --- | --- | --- |
+| token | Yes | String | 我的Token 页有用户专属且唯一的Token。 |
+| stockCode | Yes | String | 股票代码 请参考股票信息API获取合法的stockCode。 |
+| date | No | String: YYYY-MM-DD (北京时间) | 信息时间。默认值是当前最新时间。 |
+
+**返回数据说明::**
+
+| 参数名称 | 数据类型 | 说明 |
+| --- | --- | --- |
+| name | String | 行业名称 |
+| areaCode | String | 地区代码 |
+| stockCode | String | 行业代码 |
+| source | String | 行业来源 申万 : `sw`; 申万2021版 : `sw_2021`; 国证 : `cni` |
+
+### 示例
+
+```json
+{
+    "stockCode": "00700",
+    "token": "***********"
+}
+```
+
+### 返回结果
+
+```json
+{
+    "code": 1,
+    "message": "success",
+    "data": [
+        {
+            "areaCode": "hk",
+            "stockCode": "H702015",
+            "source": "hsi",
+            "name": "数码解决方案服务"
+        },
+        {
+            "areaCode": "hk",
+            "stockCode": "H7020",
+            "source": "hsi",
+            "name": "软件服务"
+        },
+        {
+            "areaCode": "hk",
+            "stockCode": "H70",
+            "source": "hsi",
+            "name": "资讯科技业"
+        }
+    ]
+}
+```
