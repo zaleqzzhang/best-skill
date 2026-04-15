@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{TITLE}}</title>
+<style>
+  /* ═══════════════════════════════════════════
+     Fonts: Anthropic Sans + TencentSans
+     ═══════════════════════════════════════════ */
+  @font-face {
+    font-family: 'Anthropic Sans';
+    src: url('https://cdn.prod.website-files.com/67ce28cfec624e2b733f8a52/69971a00a3295036497e1a28_AnthropicSans-Roman-Web.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Anthropic Sans';
+    src: url('https://cdn.prod.website-files.com/67ce28cfec624e2b733f8a52/69971a016067bf14b9b8f48d_AnthropicSans-Italic-Web.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: italic;
+  }
+  @font-face {
+    font-family: 'TencentSans';
+    src: url('https://cdn-font.hypergryph.com/fonts/TencentSans/TencentSans-W3.woff2') format('woff2');
+    font-weight: 300;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'TencentSans';
+    src: url('https://cdn-font.hypergryph.com/fonts/TencentSans/TencentSans-W7.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+  }
+
+  /* ═══════════════════════════════════════════
+     Design Tokens
+     ═══════════════════════════════════════════ */
+  :root {
+    --bg: #faf9f7;
+    --text: #1a1a1a;
+    --text-secondary: #6b6a66;
+    --text-muted: #8c8b87;
+    --border: #e0dfdb;
+    --accent-blue: #1c5a82;
+    --accent-red: #8c3b1a;
+    --accent-green: #1a6b50;
+    --card-bg: #f0efed;
+  }
+
+  /* ═══════════════════════════════════════════
+     Reset & Base
+     ═══════════════════════════════════════════ */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'TencentSans', 'Anthropic Sans', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Noto Sans SC', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.8;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page-container {
+    max-width: 1060px;
+    margin: 0 auto;
+    padding: 80px 40px 120px;
+  }
+
+  /* ═══════════════════════════════════════════
+     Page Header
+     ═══════════════════════════════════════════ */
+  .page-header {
+    text-align: center;
+    margin-bottom: 80px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid var(--border);
+  }
+  .page-header .eyebrow {
+    font-family: 'Anthropic Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+  .page-header h1 {
+    font-family: 'Anthropic Sans', sans-serif;
+    font-size: 42px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--text);
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+  .page-header .subtitle {
+    font-size: 17px;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+  .page-header .meta {
+    font-family: 'Anthropic Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 24px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ═══════════════════════════════════════════
+     Sections
+     ═══════════════════════════════════════════ */
+  .section {
+    margin-bottom: 72px;
+  }
+  .section-number {
+    font-family: 'Anthropic Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+  }
+  .section h2 {
+    font-family: 'Anthropic Sans', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 16px;
+    letter-spacing: 0.3px;
+  }
+  .section .lead {
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin-bottom: 32px;
+    max-width: 720px;
+    line-height: 1.9;
+  }
+
+  /* ═══════════════════════════════════════════
+     Diagram Wrapper
+     ═══════════════════════════════════════════ */
+  .diagram-wrapper {
+    background: var(--card-bg);
+    border-radius: 18px;
+    padding: 8px;
+    margin: 32px 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .diagram-wrapper svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 14px;
+  }
+
+  /* ═══════════════════════════════════════════
+     Prose
+     ═══════════════════════════════════════════ */
+  .prose {
+    font-size: 15.5px;
+    color: var(--text);
+    line-height: 2;
+    margin-top: 28px;
+  }
+  .prose p { margin-bottom: 16px; }
+  .prose strong { font-weight: 700; color: var(--text); }
+  .prose em { font-style: italic; color: var(--text-secondary); }
+
+  /* ═══════════════════════════════════════════
+     Callouts
+     ═══════════════════════════════════════════ */
+  .callout {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent-blue);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 24px 0;
+    font-size: 14.5px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+  }
+  .callout.warn { border-left-color: var(--accent-red); }
+  .callout.success { border-left-color: var(--accent-green); }
+  .callout .callout-title {
+    font-family: 'Anthropic Sans', sans-serif;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+    font-size: 14px;
+    letter-spacing: 0.3px;
+  }
+
+  /* ═══════════════════════════════════════════
+     Insight List
+     ═══════════════════════════════════════════ */
+  .insight-list {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+  }
+  .insight-list li {
+    position: relative;
+    padding-left: 24px;
+    margin-bottom: 12px;
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+  }
+  .insight-list li::before {
+    content: '\2192';
+    position: absolute;
+    left: 0;
+    color: var(--text-muted);
+    font-family: 'Anthropic Sans', sans-serif;
+  }
+
+  /* ═══════════════════════════════════════════
+     Divider & Footer
+     ═══════════════════════════════════════════ */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 64px 0;
+  }
+  .page-footer {
+    text-align: center;
+    padding-top: 48px;
+    border-top: 1px solid var(--border);
+    font-family: 'Anthropic Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+  }
+
+  /* ═══════════════════════════════════════════
+     SVG Text Override
+     ═══════════════════════════════════════════ */
+  svg text, svg tspan {
+    font-family: 'Anthropic Sans', 'TencentSans', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Noto Sans SC', sans-serif;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-container">
+
+  <!-- ═══════════ Header ═══════════ -->
+  <header class="page-header">
+    <div class="eyebrow">{{EYEBROW}}</div>
+    <h1>{{TITLE}}</h1>
+    <p class="subtitle">{{SUBTITLE}}</p>
+    <p class="meta">{{DATE}} &nbsp;&middot;&nbsp; {{CATEGORY}}</p>
+  </header>
+
+  <!-- ═══════════ Section Template ═══════════ -->
+  <section class="section">
+    <div class="section-number">01</div>
+    <h2>{{SECTION_TITLE}}</h2>
+    <p class="lead">{{SECTION_LEAD}}</p>
+
+    <div class="diagram-wrapper">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="960" height="540">
+        <defs>
+          <style>
+            @font-face {
+              font-family: 'Anthropic Sans';
+              src: url('https://cdn.prod.website-files.com/67ce28cfec624e2b733f8a52/69971a00a3295036497e1a28_AnthropicSans-Roman-Web.woff2') format('woff2');
+              font-weight: 100 900; font-style: normal;
+            }
+            @font-face {
+              font-family: 'Anthropic Sans';
+              src: url('https://cdn.prod.website-files.com/67ce28cfec624e2b733f8a52/69971a016067bf14b9b8f48d_AnthropicSans-Italic-Web.woff2') format('woff2');
+              font-weight: 100 900; font-style: italic;
+            }
+            text, tspan {
+              font-family: 'Anthropic Sans', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Noto Sans SC', sans-serif;
+            }
+          </style>
+          <marker id="ah1" viewBox="0 0 10 7" refX="9.5" refY="3.5"
+            markerWidth="7" markerHeight="5.5" orient="auto">
+            <path d="M 0 0.6 L 9.5 3.5 L 0 6.4" fill="none" stroke="#b0afa9" stroke-width="1.3" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+
+        <!-- Canvas -->
+        <rect x="0" y="0" width="960" height="540" rx="22" ry="22" fill="#f0efed"/>
+
+        <!-- Title -->
+        <text x="480" y="48" text-anchor="middle" font-size="21" font-weight="700" fill="#1a1a1a" letter-spacing="4">
+          {{DIAGRAM_TITLE}}
+        </text>
+
+        <!-- Diagram content goes here -->
+
+      </svg>
+    </div>
+
+    <div class="prose">
+      <p>{{PROSE_CONTENT}}</p>
+    </div>
+
+    <div class="callout">
+      <div class="callout-title">{{CALLOUT_TITLE}}</div>
+      {{CALLOUT_CONTENT}}
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Repeat sections as needed -->
+
+  <!-- ═══════════ Footer ═══════════ -->
+  <footer class="page-footer">
+    {{FOOTER_TEXT}} &middot; Built with Anthropic Sans &amp; TencentSans
+  </footer>
+
+</div>
+
+</body>
+</html>

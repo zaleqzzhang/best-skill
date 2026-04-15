@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent 时代的 Coding 思考</title>
+<style>
+  @font-face {
+    font-family: 'Anthropic Sans';
+    src: url('https://cdn.prod.website-files.com/67ce28cfec624e2b733f8a52/69971a00a3295036497e1a28_AnthropicSans-Roman-Web.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Anthropic Sans';
+    src: url('https://cdn.prod.website-files.com/67ce28cfec624e2b733f8a52/69971a016067bf14b9b8f48d_AnthropicSans-Italic-Web.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: italic;
+  }
+  @font-face {
+    font-family: 'TencentSans';
+    src: url('https://cdn-font.hypergryph.com/fonts/TencentSans/TencentSans-W3.woff2') format('woff2');
+    font-weight: 300;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'TencentSans';
+    src: url('https://cdn-font.hypergryph.com/fonts/TencentSans/TencentSans-W7.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+  }
+
+  :root {
+    --bg: #faf9f7;
+    --text: #1a1a1a;
+    --text-secondary: #6b6a66;
+    --text-muted: #8c8b87;
+    --border: #e0dfdb;
+    --accent-blue: #1c5a82;
+    --accent-red: #8c3b1a;
+    --accent-green: #1a6b50;
+    --card-bg: #f0efed;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'TencentSans', 'Anthropic Sans', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Noto Sans SC', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.8;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page-container {
+    max-width: 1060px;
+    margin: 0 auto;
+    padding: 80px 40px 120px;
+  }
+
+  /* Header */
+  .page-header {
+    text-align: center;
+    margin-bottom: 80px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid var(--border);
+  }
+  .page-header .eyebrow {
+    font-family: 'Anthropic Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+  .page-header h1 {
+    font-family: 'Anthropic Sans', sans-serif;
+    font-size: 42px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--text);
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+  .page-header .subtitle {
+    font-size: 17px;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+  .page-header .meta {
+    font-family: 'Anthropic Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 24px;
+    letter-spacing: 0.5px;
+  }
+
+  /* Section */
+  .section {
+    margin-bottom: 72px;
+  }
+  .section-number {
+    font-family: 'Anthropic Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+  }
+  .section h2 {
+    font-family: 'Anthropic Sans', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 16px;
+    letter-spacing: 0.3px;
+  }
+  .section .lead {
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin-bottom: 32px;
+    max-width: 720px;
+    line-height: 1.9;
+  }
+
+  /* Diagram container */
+  .diagram-wrapper {
+    background: var(--card-bg);
+    border-radius: 18px;
+    padding: 8px;
+    margin: 32px 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .diagram-wrapper svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 14px;
+  }
+
+  /* Prose */
+  .prose {
+    font-size: 15.5px;
+    color: var(--text);
+    line-height: 2;
+    margin-top: 28px;
+  }
+  .prose p {
+    margin-bottom: 16px;
+  }
+  .prose strong {
+    font-weight: 700;
+    color: var(--text);
+  }
+  .prose em {
+    font-style: italic;
+    color: var(--text-secondary);
+  }
+
+  /* Callout */
+  .callout {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent-blue);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 24px 0;
+    font-size: 14.5px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+  }
+  .callout.warn {
+    border-left-color: var(--accent-red);
+  }
+  .callout.success {
+    border-left-color: var(--accent-green);
+  }
+  .callout .callout-title {
+    font-family: 'Anthropic Sans', sans-serif;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+    font-size: 14px;
+    letter-spacing: 0.3px;
+  }
+
+  /* Key insight list */
+  .insight-list {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+  }
+  .insight-list li {
+    position: relative;
+    padding-left: 24px;
+    margin-bottom: 12px;
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+  }
+  .insight-list li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--text-muted);
+    font-family: 'Anthropic Sans', sans-serif;
+  }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 64px 0;
+  }
+
+  /* Footer */
+  .page-footer {
+    text-align: center;
+    padding-top: 48px;
+    border-top: 1px solid var(--border);
+    font-family: 'Anthropic Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+  }
+
+  /* SVG text styling */
+  svg text, svg tspan {
+    font-family: 'Anthropic Sans', 'TencentSans', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Noto Sans SC', sans-serif;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-container">
+
+  <!-- Header -->
+  <header class="page-header">
+    <div class="eyebrow">Technical Insights</div>
+    <h1>Agent 时代的 Coding 思考</h1>
+    <p class="subtitle">从 Hermes Agent 的闭环学习到 OpenClaw 的企业化困境，<br>AI Agent 能为编程工作流带来什么启示？</p>
+    <p class="meta">2026.04.09 &nbsp;·&nbsp; Research Notes</p>
+  </header>
+
+  <!-- Section 1: Hermes 闭环学习系统 -->
+  <section class="section">
+    <div class="section-number">01</div>
+    <h2>Hermes Agent 闭环学习系统</h2>
+    <p class="lead">Nous Research 的 Hermes Agent 是目前唯一内置学习闭环的开源 AI Agent。它不只是执行任务，而是从每次任务中提取可复用知识，形成"程序化记忆"。</p>
+
+    <div class="diagram-wrapper">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 580" width="960" height="580">
+        <defs>
+          <style>
+            @font-face {
+              font-family: 'Anthropic Sans';
+              src: url('https://cdn.prod.website-files.com/67ce28cfec624e2b733f8a52/69971a00a3295036497e1a28_AnthropicSans-Roman-Web.woff2') format('woff2');
+              font-weight: 100 900;
+              font-style: normal;
+            }
+            @font-face {
+              font-family: 'Anthropic Sans';
+              src: url('https://cdn.prod.website-files.com/67ce28cfec624e2b733f8a52/69971a016067bf14b9b8f48d_AnthropicSans-Italic-Web.woff2') format('woff2');
+              font-weight: 100 900;
+              font-style: italic;
+            }
+            text, tspan {
+              font-family: 'Anthropic Sans', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Noto Sans SC', sans-serif;
+            }
+          </style>
+          <marker id="ah1" viewBox="0 0 10 7" refX="9.5" refY="3.5" markerWidth="7" markerHeight="5.5" orient="auto">
+            <path d="M 0 0.6 L 9.5 3.5 L 0 6.4" fill="none" stroke="#b0afa9" stroke-width="1.3" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+
+        <!-- Canvas -->
+        <rect x="0" y="0" width="960" height="580" rx="22" ry="22" fill="#f0efed"/>
+
+        <!-- Title -->
+        <text x="480" y="48" text-anchor="middle" font-size="21" font-weight="700" fill="#1a1a1a" letter-spacing="4">HERMES AGENT 闭环学习系统</text>
+
+        <!-- Main Loop Group -->
+        <rect x="40" y="72" width="880" height="360" rx="12" fill="none" stroke="#c4c3bf" stroke-width="1.6" stroke-dasharray="8,5"/>
+        <text x="58" y="92" font-size="13" font-weight="400" fill="#8c8b87">Self-Improving Loop</text>
+
+        <!-- Node: 执行任务 -->
+        <rect x="60" y="130" width="140" height="60" rx="10" fill="#cce0f0"/>
+        <text x="130" y="155" text-anchor="middle" font-size="16" font-weight="600" fill="#1c5a82">执行任务</text>
+        <text x="130" y="174" text-anchor="middle" font-size="11.5" font-weight="400" fill="#5a96b8">Task Execution</text>
+
+        <!-- Arrow 1 -->
+        <polyline points="200,160 250,160" fill="none" stroke="#b0afa9" stroke-width="1.4" marker-end="url(#ah1)"/>
+
+        <!-- Node: 触发判断 -->
+        <rect x="255" y="130" width="140" height="60" rx="10" fill="#ffffff" stroke="#d8d7d3" stroke-width="1"/>
+        <text x="325" y="155" text-anchor="middle" font-size="16" font-weight="600" fill="#1a1a1a">触发判断</text>
+        <text x="325" y="174" text-anchor="middle" font-size="11.5" font-weight="400" fill="#999">≥5 次工具调用</text>
+
+        <!-- Arrow 2 -->
+        <polyline points="395,160 445,160" fill="none" stroke="#b0afa9" stroke-width="1.4" marker-end="url(#ah1)"/>
+
+        <!-- Node: 创建技能 -->
+        <rect x="450" y="130" width="140" height="60" rx="10" fill="#f0d5c6"/>
+        <text x="520" y="155" text-anchor="middle" font-size="16" font-weight="600" fill="#8c3b1a">创建技能</text>
+        <text x="520" y="174" text-anchor="middle" font-size="11.5" font-weight="400" fill="#b86a48">SKILL.md</text>
+
+        <!-- Arrow 3 -->
+        <polyline points="590,160 640,160" fill="none" stroke="#b0afa9" stroke-width="1.4" marker-end="url(#ah1)"/>
+
+        <!-- Node: 条件激活 -->
+        <rect x="645" y="130" width="140" height="60" rx="10" fill="#cce0f0"/>
+        <text x="715" y="155" text-anchor="middle" font-size="16" font-weight="600" fill="#1c5a82">条件激活</text>
+        <text x="715" y="174" text-anchor="middle" font-size="11.5" font-weight="400" fill="#5a96b8">Context Match</text>
+
+        <!-- Arrow down from 条件激活 -->
+        <polyline points="715,190 715,240" fill="none" stroke="#b0afa9" stroke-width="1.4" marker-end="url(#ah1)"/>
+
+        <!-- Node: 使用反馈 -->
+        <rect x="645" y="245" width="140" height="60" rx="10" fill="#ffffff" stroke="#d8d7d3" stroke-width="1"/>
+        <text x="715" y="270" text-anchor="middle" font-size="16" font-weight="600" fill="#1a1a1a">使用反馈</text>
+        <text x="715" y="289" text-anchor="middle" font-size="11.5" font-weight="400" fill="#999">Runtime Feedback</text>
+
+        <!-- Arrow left from 使用反馈 -->
+        <polyline points="645,275 595,275" fill="none" stroke="#b0afa9" stroke-width="1.4" marker-end="url(#ah1)"/>
+
+        <!-- Node: 增量 Patch -->
+        <rect x="450" y="245" width="140" height="60" rx="10" fill="#f0d5c6"/>
+        <text x="520" y="270" text-anchor="middle" font-size="16" font-weight="600" fill="#8c3b1a">增量 Patch</text>
+        <text x="520" y="289" text-anchor="middle" font-size="11.5" font-weight="400" fill="#b86a48">Token-efficient</text>
+
+        <!-- Arrow left from 增量 Patch -->
+        <polyline points="450,275 400,275" fill="none" stroke="#b0afa9" stroke-width="1.4" marker-end="url(#ah1)"/>
+
+        <!-- Node: 记忆沉淀 -->
+        <rect x="255" y="245" width="140" height="60" rx="10" fill="#c8e8da"/>
+        <text x="325" y="270" text-anchor="middle" font-size="16" font-weight="600" fill="#1a6b50">记忆沉淀</text>
+        <text x="325" y="289" text-anchor="middle" font-size="11.5" font-weight="400" fill="#509878">Bounded Memory</text>
+
+        <!-- Arrow left from 记忆沉淀 back to loop -->
+        <polyline points="255,275 130,275 130,190" fill="none" stroke="#b0afa9" stroke-width="1.4" marker-end="url(#ah1)"/>
+
+        <!-- 渐进式披露 Group -->
+        <rect x="60" y="350" width="260" height="72" rx="12" fill="none" stroke="#c4c3bf" stroke-width="1.6" stroke-dasharray="8,5"/>
+        <text x="78" y="370" font-size="13" font-weight="400" fill="#8c8b87">渐进式披露 Progressive Disclosure</text>
+
+        <!-- Level tags -->
+        <rect x="75" y="384" width="70" height="28" rx="7" fill="#d4edda"/>
+        <text x="110" y="403" text-anchor="middle" font-size="12" font-weight="600" fill="#256b3a">L0 ~3k</text>
+        <rect x="155" y="384" width="70" height="28" rx="7" fill="#cce0f0"/>
+        <text x="190" y="403" text-anchor="middle" font-size="12" font-weight="600" fill="#1c5a82">L1 Full</text>
+        <rect x="235" y="384" width="70" height="28" rx="7" fill="#f0d5c6"/>
+        <text x="270" y="403" text-anchor="middle" font-size="12" font-weight="600" fill="#8c3b1a">L2 Ref</text>
+
+        <!-- 有界记忆 Group -->
+        <rect x="350" y="350" width="280" height="72" rx="12" fill="none" stroke="#c4c3bf" stroke-width="1.6" stroke-dasharray="8,5"/>
+        <text x="368" y="370" font-size="13" font-weight="400" fill="#8c8b87">有界记忆 Bounded Memory</text>
+        <rect x="365" y="384" width="116" height="28" rx="7" fill="#c8e8da"/>
+        <text x="423" y="403" text-anchor="middle" font-size="12" font-weight="600" fill="#1a6b50">MEMORY 2.2K</text>
+        <rect x="491" y="384" width="116" height="28" rx="7" fill="#c8e8da"/>
+        <text x="549" y="403" text-anchor="middle" font-size="12" font-weight="600" fill="#1a6b50">USER 1.4K</text>
+
+        <!-- 安全扫描 Group -->
+        <rect x="660" y="350" width="250" height="72" rx="12" fill="none" stroke="#c4c3bf" stroke-width="1.6" stroke-dasharray="8,5"/>
+        <text x="678" y="370" font-size="13" font-weight="400" fill="#8c8b87">安全机制 Security Scan</text>
+        <rect x="675" y="384" width="100" height="28" rx="7" fill="#f0d5c6"/>
+        <text x="725" y="403" text-anchor="middle" font-size="12" font-weight="600" fill="#8c3b1a">dangerous</text>
+        <rect x="785" y="384" width="100" height="28" rx="7" fill="#d4edda"/>
+        <text x="835" y="403" text-anchor="middle" font-size="12" font-weight="600" fill="#256b3a">trusted</text>
+
+        <!-- Annotation -->
+        <text x="480" y="468" text-anchor="middle" font-size="12.5" font-style="italic" fill="#aaa9a5">容量限制迫使 Agent 不断反思和优化知识组织方式 —— 这本身就是"元认知"训练</text>
+
+        <!-- Footer -->
+        <rect x="40" y="498" width="480" height="52" rx="10" fill="#ffffff" stroke="#d8d7d3" stroke-width="1"/>
+        <text x="60" y="520" font-size="13" fill="#8c8b87" letter-spacing="0.8">KEY INSIGHT</text>
+        <text x="60" y="538" font-size="13" fill="#8c8b87">不依赖离线训练，在实际 task-solving 过程中通过工具调用反馈调整知识表达</text>
+      </svg>
+    </div>
+
+    <div class="prose">
+      <p>Hermes Agent 的技能系统不是简单的"把步骤存下来"。它构建了一个<strong>有门槛筛选、有条件激活、有增量改进、有容量约束</strong>的完整闭环。</p>
+      <p>几个精妙的设计点：技能只在满足条件时才创建（≥5 次工具调用、解决了 error、被用户纠正），避免垃圾技能泛滥；技能分三级加载（L0 目录摘要仅 ~3k tokens），解决了"技能多了 context 爆炸"的问题；MEMORY.md 限制 2200 字符的<strong>有界记忆</strong>设计，迫使 agent 不断做知识蒸馏。</p>
+    </div>
+
+    <div class="callout">
+      <div class="callout-title">核心机制</div>
+      与传统"离线训练 + 在线推理"范式不同，Hermes 在实际 task-solving 过程中，通过每一个工具调用的结果反馈来调整知识表达。这是一种运行时的、增量式的、有界的学习。
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Section 2: Hermes vs OpenClaw -->
+  <section class="section">
+    <div class="section-number">02</div>
+    <h2>Hermes vs OpenClaw：深度优先 vs 广度优先</h2>
+    <p class="lead">两者走了完全不同的路线——OpenClaw 追求生态广度和平台覆盖，Hermes 追求学习深度和自我进化。它们不是替代关系，而是互补关系。</p>
+
+    <div class="diagram-wrapper">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="960" height="540">
+        <defs>
+          <style>
+            @font-face {
+              font-family: 'Anthropic Sans';
+              src: url('https://cdn.prod.website-files.com/67ce28cfec624e2b733f8a52/69971a00a3295036497e1a28_AnthropicSans-Roman-Web.woff2') format('woff2');
+              font-weight: 100 900; font-style: normal;
+            }
+            @font-face {
+              font-family: 'Anthropic Sans';
+              src: url('https://cdn.prod.website-files.com/67ce28cfec624e2b733f8a52/69971a016067bf14b9b8f48d_AnthropicSans-Italic-Web.woff2') format('woff2');
+              font-weight: 100 900; font-style: italic;
+            }
+            text, tspan { font-family: 'Anthropic Sans', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Noto Sans SC', sans-serif; }
+          </style>
+          <marker id="ah2" viewBox="0 0 10 7" refX="9.5" refY="3.5" markerWidth="7" markerHeight="5.5" orient="auto">
+            <path d="M 0 0.6 L 9.5 3.5 L 0 6.4" fill="none" stroke="#b0afa9" stroke-width="1.3" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+
+        <rect x="0" y="0" width="960" height="540" rx="22" ry="22" fill="#f0efed"/>
+        <text x="480" y="48" text-anchor="middle" font-size="21" font-weight="700" fill="#1a1a1a" letter-spacing="4">HERMES AGENT vs OPENCLAW</text>
+
+        <!-- OpenClaw Side -->
+        <rect x="40" y="72" width="420" height="410" rx="12" fill="none" stroke="#c4c3bf" stroke-width="1.6" stroke-dasharray="8,5"/>
+        <text x="58" y="92" font-size="13" font-weight="400" fill="#8c8b87">OpenClaw · 广度优先 · 345K ⭐</text>
+
+        <!-- Central hub -->
+        <rect x="160" y="115" width="160" height="56" rx="10" fill="#cce0f0"/>
+        <text x="240" y="140" text-anchor="middle" font-size="16" font-weight="600" fill="#1c5a82">中央网关</text>
+        <text x="240" y="157" text-anchor="middle" font-size="11.5" font-weight="400" fill="#5a96b8">Gateway Hub</text>
+
+        <!-- Platform nodes -->
+        <rect x="60" y="200" width="100" height="42" rx="8" fill="#ffffff" stroke="#d8d7d3" stroke-width="1"/>
+        <text x="110" y="226" text-anchor="middle" font-size="13" font-weight="500" fill="#1a1a1a">50+ 平台</text>
+        <rect x="175" y="200" width="100" height="42" rx="8" fill="#ffffff" stroke="#d8d7d3" stroke-width="1"/>
+        <text x="225" y="226" text-anchor="middle" font-size="13" font-weight="500" fill="#1a1a1a">ClawHub</text>
+        <rect x="290" y="200" width="100" height="42" rx="8" fill="#ffffff" stroke="#d8d7d3" stroke-width="1"/>
+        <text x="340" y="226" text-anchor="middle" font-size="13" font-weight="500" fill="#1a1a1a">2857 技能</text>
+
+        <!-- Arrows down -->
+        <line x1="110" y1="171" x2="110" y2="198" stroke="#b0afa9" stroke-width="1.4" marker-end="url(#ah2)"/>
+        <line x1="240" y1="171" x2="225" y2="198" stroke="#b0afa9" stroke-width="1.4" marker-end="url(#ah2)"/>
+        <line x1="340" y1="171" x2="340" y2="198" stroke="#b0afa9" stroke-width="1.4" marker-end="url(#ah2)"/>
+
+        <!-- Features -->
+        <rect x="60" y="270" width="160" height="50" rx="10" fill="#c8e8da"/>
+        <text x="140" y="292" text-anchor="middle" font-size="14" font-weight="600" fill="#1a6b50">第二大脑记忆</text>
+        <text x="140" y="308" text-anchor="middle" font-size="11" font-weight="400" fill="#509878">团队可共享</text>
+
+        <rect x="240" y="270" width="160" height="50" rx="10" fill="#c8e8da"/>
+        <text x="320" y="292" text-anchor="middle" font-size="14" font-weight="600" fill="#1a6b50">全系统访问</text>
+        <text x="320" y="308" text-anchor="middle" font-size="11" font-weight="400" fill="#509878">键盘/鼠标/Shell</text>
+
+        <!-- Warning -->
+        <rect x="60" y="345" width="340" height="42" rx="8" fill="#f0d5c6"/>
+        <text x="230" y="371" text-anchor="middle" font-size="13" font-weight="600" fill="#8c3b1a">⚠ CVE-2026-25253 · 341 恶意技能 · 攻击面大</text>
+
+        <!-- Verdict -->
+        <rect x="60" y="410" width="340" height="48" rx="10" fill="#ffffff" stroke="#d8d7d3" stroke-width="1"/>
+        <text x="230" y="430" text-anchor="middle" font-size="12" fill="#8c8b87" letter-spacing="0.8">BEST FOR</text>
+        <text x="230" y="447" text-anchor="middle" font-size="13" font-weight="600" fill="#1a1a1a">多平台触达 · 团队协作 · 快速集成</text>
+
+        <!-- Hermes Side -->
+        <rect x="500" y="72" width="420" height="410" rx="12" fill="none" stroke="#c4c3bf" stroke-width="1.6" stroke-dasharray="8,5"/>
+        <text x="518" y="92" font-size="13" font-weight="400" fill="#8c8b87">Hermes Agent · 深度优先 · 41K ⭐</text>
+
+        <!-- Core loop node -->
+        <rect x="620" y="115" width="160" height="56" rx="10" fill="#f0d5c6"/>
+        <text x="700" y="140" text-anchor="middle" font-size="16" font-weight="600" fill="#8c3b1a">学习闭环</text>
+        <text x="700" y="157" text-anchor="middle" font-size="11.5" font-weight="400" fill="#b86a48">Self-Improving</text>
+
+        <!-- Learning nodes -->
+        <rect x="520" y="200" width="100" height="42" rx="8" fill="#cce0f0"/>
+        <text x="570" y="226" text-anchor="middle" font-size="13" font-weight="600" fill="#1c5a82">技能生长</text>
+        <rect x="635" y="200" width="100" height="42" rx="8" fill="#cce0f0"/>
+        <text x="685" y="226" text-anchor="middle" font-size="13" font-weight="600" fill="#1c5a82">4 层记忆</text>
+        <rect x="750" y="200" width="100" height="42" rx="8" fill="#cce0f0"/>
+        <text x="800" y="226" text-anchor="middle" font-size="13" font-weight="600" fill="#1c5a82">用户建模</text>
+
+        <!-- Arrows -->
+        <line x1="620" y1="171" x2="570" y2="198" stroke="#b0afa9" stroke-width="1.4" marker-end="url(#ah2)"/>
+        <line x1="700" y1="171" x2="685" y2="198" stroke="#b0afa9" stroke-width="1.4" marker-end="url(#ah2)"/>
+        <line x1="780" y1="171" x2="800" y2="198" stroke="#b0afa9" stroke-width="1.4" marker-end="url(#ah2)"/>
+
+        <!-- Features -->
+        <rect x="520" y="270" width="160" height="50" rx="10" fill="#c8e8da"/>
+        <text x="600" y="292" text-anchor="middle" font-size="14" font-weight="600" fill="#1a6b50">有界记忆蒸馏</text>
+        <text x="600" y="308" text-anchor="middle" font-size="11" font-weight="400" fill="#509878">2.2K 字符上限</text>
+
+        <rect x="700" y="270" width="160" height="50" rx="10" fill="#c8e8da"/>
+        <text x="780" y="292" text-anchor="middle" font-size="14" font-weight="600" fill="#1a6b50">RL 训练管线</text>
+        <text x="780" y="308" text-anchor="middle" font-size="11" font-weight="400" fill="#509878">Atropos 集成</text>
+
+        <!-- Security -->
+        <rect x="520" y="345" width="340" height="42" rx="8" fill="#d4edda"/>
+        <text x="690" y="371" text-anchor="middle" font-size="13" font-weight="600" fill="#256b3a">✓ 只读根 FS · 权限降级 · 预执行扫描 · 零 CVE</text>
+
+        <!-- Verdict -->
+        <rect x="520" y="410" width="340" height="48" rx="10" fill="#ffffff" stroke="#d8d7d3" stroke-width="1"/>
+        <text x="690" y="430" text-anchor="middle" font-size="12" fill="#8c8b87" letter-spacing="0.8">BEST FOR</text>
+        <text x="690" y="447" text-anchor="middle" font-size="13" font-weight="600" fill="#1a1a1a">长期自我优化 · 个人深度助理 · 研究场景</text>
+
+        <!-- Bottom annotation -->
+        <text x="480" y="516" text-anchor="middle" font-size="12.5" font-style="italic" fill="#aaa9a5">许多用户同时运行两者 —— OpenClaw 负责广泛触达，Hermes 专注深度学习</text>
+      </svg>
+    </div>
+
+    <div class="prose">
+      <p>"好不好用"取决于你要什么。<strong>如果追求 agent 越用越聪明</strong>，Hermes 确实做得更深——它的技能是从实战中"长出来的活文档"，而 OpenClaw 的技能是"从市场买回来的静态资源"（其中 341 个还是恶意的）。</p>
+      <p>但 OpenClaw 的生态优势也是真实的：50+ 消息平台接入、345K Stars 的社区、2857+ 预制技能。两者更像<strong>互补关系而非替代关系</strong>。</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Section 3: AI Coding 借鉴 -->
+  <section class="section">
+    <div class="section-number">03</div>
+    <h2>AI Coding 的三层借鉴</h2>
+    <p class="lead">Hermes 的技能系统不是为 coding 设计的，但它的机制对 AI Coding 工作流有三层递进的启示——从静态规则到活知识，从重复推理到模式复用，从失忆到经验积累。</p>
+
+    <div class="diagram-wrapper">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 600" width="960" height="600">
+        <defs>
+          <style>
+            @font-face {
+              font-family: 'Anthropic Sans';
+              src: url('https://cdn.prod.website-files.com/67ce28cfec624e2b733f8a52/69971a00a3295036497e1a28_AnthropicSans-Roman-Web.woff2') format('woff2');
+              font-weight: 100 900; font-style: normal;
+            }
+            @font-face {
+              font-family: 'Anthropic Sans';
+              src: url('https://cdn.prod.website-files.com/67ce28cfec624e2b733f8a52/69971a016067bf14b9b8f48d_AnthropicSans-Italic-Web.woff2') format('woff2');
+              font-weight: 100 900; font-style: italic;
+            }
+            text, tspan { font-family: 'Anthropic Sans', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Noto Sans SC', sans-serif; }
+          </style>
+          <marker id="ah3" viewBox="0 0 10 7" refX="9.5" refY="3.5" markerWidth="7" markerHeight="5.5" orient="auto">
+            <path d="M 0 0.6 L 9.5 3.5 L 0 6.4" fill="none" stroke="#b0afa9" stroke-width="1.3" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+
+        <rect x="0" y="0" width="960" height="600" rx="22" ry="22" fill="#f0efed"/>
+        <text x="480" y="48" text-anchor="middle" font-size="21" font-weight="700" fill="#1a1a1a" letter-spacing="4">AI CODING 的三层借鉴</text>
+        <text x="480" y="72" text-anchor="middle" font-size="12.5" font-style="italic" fill="#aaa9a5">从 Hermes Agent 技能系统到编程工作流的启示</text>
+
+        <!-- Layer 1 -->
+        <rect x="40" y="100" width="880" height="130" rx="12" fill="none" stroke="#c4c3bf" stroke-width="1.6" stroke-dasharray="8,5"/>
+        <text x="58" y="120" font-size="13" font-weight="400" fill="#8c8b87">Layer 1 · 项目级程序化记忆</text>
+
+        <!-- Current state -->
+        <rect x="60" y="138" width="160" height="56" rx="10" fill="#ffffff" stroke="#d8d7d3" stroke-width="1"/>
+        <text x="140" y="162" text-anchor="middle" font-size="14" font-weight="600" fill="#1a1a1a">.cursorrules</text>
+        <text x="140" y="179" text-anchor="middle" font-size="11.5" font-weight="400" fill="#999">静态手写规则</text>
+
+        <polyline points="220,166 290,166" fill="none" stroke="#b0afa9" stroke-width="1.4" marker-end="url(#ah3)"/>
+        <text x="255" y="158" text-anchor="middle" font-size="11" font-style="italic" fill="#aaa9a5">进化</text>
+
+        <rect x="295" y="138" width="200" height="56" rx="10" fill="#cce0f0"/>
+        <text x="395" y="162" text-anchor="middle" font-size="14" font-weight="600" fill="#1c5a82">自动沉淀项目规范</text>
+        <text x="395" y="179" text-anchor="middle" font-size="11.5" font-weight="400" fill="#5a96b8">用户纠正 → 自动记录</text>
+
+        <polyline points="495,166 560,166" fill="none" stroke="#b0afa9" stroke-width="1.4" marker-end="url(#ah3)"/>
+
+        <rect x="565" y="138" width="160" height="56" rx="10" fill="#c8e8da"/>
+        <text x="645" y="162" text-anchor="middle" font-size="14" font-weight="600" fill="#1a6b50">活知识</text>
+        <text x="645" y="179" text-anchor="middle" font-size="11.5" font-weight="400" fill="#509878">持续改进的规范</text>
+
+        <!-- Example tag -->
+        <rect x="760" y="148" width="148" height="32" rx="7" fill="#d4edda"/>
+        <text x="834" y="169" text-anchor="middle" font-size="11.5" font-weight="600" fill="#256b3a">"用 pnpm 不要 npm"</text>
+
+        <!-- Layer 2 -->
+        <rect x="40" y="250" width="880" height="130" rx="12" fill="none" stroke="#c4c3bf" stroke-width="1.6" stroke-dasharray="8,5"/>
+        <text x="58" y="270" font-size="13" font-weight="400" fill="#8c8b87">Layer 2 · 代码模式自动提取</text>
+
+        <rect x="60" y="288" width="160" height="56" rx="10" fill="#ffffff" stroke="#d8d7d3" stroke-width="1"/>
+        <text x="140" y="312" text-anchor="middle" font-size="14" font-weight="600" fill="#1a1a1a">重复 Pattern</text>
+        <text x="140" y="329" text-anchor="middle" font-size="11.5" font-weight="400" fill="#999">每次从头推理</text>
+
+        <polyline points="220,316 290,316" fill="none" stroke="#b0afa9" stroke-width="1.4" marker-end="url(#ah3)"/>
+        <text x="255" y="308" text-anchor="middle" font-size="11" font-style="italic" fill="#aaa9a5">提取</text>
+
+        <rect x="295" y="288" width="200" height="56" rx="10" fill="#f0d5c6"/>
+        <text x="395" y="312" text-anchor="middle" font-size="14" font-weight="600" fill="#8c3b1a">代码模板 / 技能</text>
+        <text x="395" y="329" text-anchor="middle" font-size="11.5" font-weight="400" fill="#b86a48">error handling pattern</text>
+
+        <polyline points="495,316 560,316" fill="none" stroke="#b0afa9" stroke-width="1.4" marker-end="url(#ah3)"/>
+
+        <rect x="565" y="288" width="160" height="56" rx="10" fill="#cce0f0"/>
+        <text x="645" y="312" text-anchor="middle" font-size="14" font-weight="600" fill="#1c5a82">条件激活复用</text>
+        <text x="645" y="329" text-anchor="middle" font-size="11.5" font-weight="400" fill="#5a96b8">Context Match</text>
+
+        <rect x="760" y="298" width="148" height="32" rx="7" fill="#d4edda"/>
+        <text x="834" y="319" text-anchor="middle" font-size="11.5" font-weight="600" fill="#256b3a">知识 + 推理 > 纯推理</text>
+
+        <!-- Layer 3 -->
+        <rect x="40" y="400" width="880" height="130" rx="12" fill="none" stroke="#c4c3bf" stroke-width="1.6" stroke-dasharray="8,5"/>
+        <text x="58" y="420" font-size="13" font-weight="400" fill="#8c8b87">Layer 3 · 跨会话调试经验</text>
+
+        <rect x="60" y="438" width="160" height="56" rx="10" fill="#ffffff" stroke="#d8d7d3" stroke-width="1"/>
+        <text x="140" y="462" text-anchor="middle" font-size="14" font-weight="600" fill="#1a1a1a">上次的坑</text>
+        <text x="140" y="479" text-anchor="middle" font-size="11.5" font-weight="400" fill="#999">ESM/CJS 兼容问题</text>
+
+        <polyline points="220,466 290,466" fill="none" stroke="#b0afa9" stroke-width="1.4" marker-end="url(#ah3)"/>
+        <text x="255" y="458" text-anchor="middle" font-size="11" font-style="italic" fill="#aaa9a5">索引</text>
+
+        <rect x="295" y="438" width="200" height="56" rx="10" fill="#cce0f0"/>
+        <text x="395" y="462" text-anchor="middle" font-size="14" font-weight="600" fill="#1c5a82">FTS5 + LLM 摘要</text>
+        <text x="395" y="479" text-anchor="middle" font-size="11.5" font-weight="400" fill="#5a96b8">跨会话全文检索</text>
+
+        <polyline points="495,466 560,466" fill="none" stroke="#b0afa9" stroke-width="1.4" marker-end="url(#ah3)"/>
+
+        <rect x="565" y="438" width="160" height="56" rx="10" fill="#c8e8da"/>
+        <text x="645" y="462" text-anchor="middle" font-size="14" font-weight="600" fill="#1a6b50">经验召回</text>
+        <text x="645" y="479" text-anchor="middle" font-size="11.5" font-weight="400" fill="#509878">"记得上次的方案"</text>
+
+        <rect x="760" y="448" width="148" height="32" rx="7" fill="#f0d5c6"/>
+        <text x="834" y="469" text-anchor="middle" font-size="11.5" font-weight="600" fill="#8c3b1a">工具 → 同事</text>
+
+        <!-- Bottom insight -->
+        <rect x="40" y="550" width="560" height="34" rx="10" fill="#ffffff" stroke="#d8d7d3" stroke-width="1"/>
+        <text x="60" y="572" font-size="13" fill="#8c8b87" letter-spacing="0.5">局限：主要作用于知识层面（procedural memory），难以改进 reasoning 能力</text>
+      </svg>
+    </div>
+
+    <div class="prose">
+      <p>当前 AI Coding 工具的一个核心痛点是：<strong>每次对话都从零开始推理</strong>。上周花 30 分钟排查的 ESM/CJS 兼容问题，这周遇到类似错误，agent 又完全不记得。</p>
+      <p>三层借鉴是递进的——第一层解决"规范记忆"，第二层解决"模式复用"，第三层解决"经验积累"。当 coding agent 能做到第三层时，它就不再是一个工具，而是一个<strong>真正的同事</strong>。</p>
+    </div>
+
+    <div class="callout success">
+      <div class="callout-title">核心启示</div>
+      停止让每次对话都从零开始。让 coding agent 积累项目级的程序化记忆——不是静态规则文件，而是从实战中自动生长、持续改进的活知识。
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Section 4: OpenClaw 企业部署演进 -->
+  <section class="section">
+    <div class="section-number">04</div>
+    <h2>OpenClaw 企业级部署的三代演进</h2>
+    <p class="lead">从"每人一台 VPS"到 Kubernetes 原生编排，企业级 AI Agent 部署正在经历快速进化——但根本的安全模型问题仍未解决。</p>
+
+    <div class="diagram-wrapper">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 600" width="960" height="600">
+        <defs>
+          <style>
+            @font-face {
+              font-family: 'Anthropic Sans';
+              src: url('https://cdn.prod.website-files.com/67ce28cfec624e2b733f8a52/69971a00a3295036497e1a28_AnthropicSans-Roman-Web.woff2') format('woff2');
+              font-weight: 100 900; font-style: normal;
+            }
+            @font-face {
+              font-family: 'Anthropic Sans';
+              src: url('https://cdn.prod.website-files.com/67ce28cfec624e2b733f8a52/69971a016067bf14b9b8f48d_AnthropicSans-Italic-Web.woff2') format('woff2');
+              font-weight: 100 900; font-style: italic;
+            }
+            text, tspan { font-family: 'Anthropic Sans', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Noto Sans SC', sans-serif; }
+          </style>
+          <marker id="ah4" viewBox="0 0 10 7" refX="9.5" refY="3.5" markerWidth="7" markerHeight="5.5" orient="auto">
+            <path d="M 0 0.6 L 9.5 3.5 L 0 6.4" fill="none" stroke="#b0afa9" stroke-width="1.3" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+
+        <rect x="0" y="0" width="960" height="600" rx="22" ry="22" fill="#f0efed"/>
+        <text x="480" y="48" text-anchor="middle" font-size="21" font-weight="700" fill="#1a1a1a" letter-spacing="4">OPENCLAW 企业级部署演进</text>
+
+        <!-- Gen 1 -->
+        <rect x="40" y="80" width="270" height="340" rx="12" fill="none" stroke="#c4c3bf" stroke-width="1.6" stroke-dasharray="8,5"/>
+        <text x="58" y="100" font-size="13" font-weight="400" fill="#8c8b87">Gen 1 · 每人一台 VPS</text>
+
+        <rect x="65" y="118" width="105" height="44" rx="8" fill="#ffffff" stroke="#d8d7d3" stroke-width="1"/>
+        <text x="117" y="145" text-anchor="middle" font-size="12" font-weight="500" fill="#1a1a1a">VPS-A</text>
+        <rect x="180" y="118" width="105" height="44" rx="8" fill="#ffffff" stroke="#d8d7d3" stroke-width="1"/>
+        <text x="232" y="145" text-anchor="middle" font-size="12" font-weight="500" fill="#1a1a1a">VPS-B</text>
+        <rect x="65" y="172" width="105" height="44" rx="8" fill="#ffffff" stroke="#d8d7d3" stroke-width="1"/>
+        <text x="117" y="199" text-anchor="middle" font-size="12" font-weight="500" fill="#1a1a1a">VPS-C</text>
+        <rect x="180" y="172" width="105" height="44" rx="8" fill="#ffffff" stroke="#d8d7d3" stroke-width="1"/>
+        <text x="232" y="199" text-anchor="middle" font-size="12" font-weight="500" fill="#1a1a1a">VPS-...</text>
+
+        <!-- Pain points -->
+        <rect x="60" y="235" width="230" height="38" rx="7" fill="#f0d5c6"/>
+        <text x="175" y="259" text-anchor="middle" font-size="12" font-weight="600" fill="#8c3b1a">运维地狱 · 雪花服务器</text>
+        <rect x="60" y="281" width="230" height="38" rx="7" fill="#f0d5c6"/>
+        <text x="175" y="305" text-anchor="middle" font-size="12" font-weight="600" fill="#8c3b1a">资源浪费 · 大部分时间空闲</text>
+        <rect x="60" y="327" width="230" height="38" rx="7" fill="#f0d5c6"/>
+        <text x="175" y="351" text-anchor="middle" font-size="12" font-weight="600" fill="#8c3b1a">安全裸奔 · 无审计无风控</text>
+        <rect x="60" y="373" width="230" height="38" rx="7" fill="#f0d5c6"/>
+        <text x="175" y="397" text-anchor="middle" font-size="12" font-weight="600" fill="#8c3b1a">成本不透明 · 无法按部门核算</text>
+
+        <!-- Arrow Gen1 → Gen2 -->
+        <polyline points="310,250 340,250" fill="none" stroke="#b0afa9" stroke-width="1.4" marker-end="url(#ah4)"/>
+
+        <!-- Gen 2 -->
+        <rect x="345" y="80" width="270" height="340" rx="12" fill="none" stroke="#c4c3bf" stroke-width="1.6" stroke-dasharray="8,5"/>
+        <text x="363" y="100" font-size="13" font-weight="400" fill="#8c8b87">Gen 2 · Docker 编排</text>
+
+        <rect x="370" y="118" width="220" height="50" rx="10" fill="#cce0f0"/>
+        <text x="480" y="140" text-anchor="middle" font-size="14" font-weight="600" fill="#1c5a82">共享服务器</text>
+        <text x="480" y="156" text-anchor="middle" font-size="11" font-weight="400" fill="#5a96b8">Docker Host</text>
+
+        <rect x="370" y="182" width="66" height="36" rx="7" fill="#d4edda"/>
+        <text x="403" y="205" text-anchor="middle" font-size="11" font-weight="600" fill="#256b3a">容器 A</text>
+        <rect x="446" y="182" width="66" height="36" rx="7" fill="#d4edda"/>
+        <text x="479" y="205" text-anchor="middle" font-size="11" font-weight="600" fill="#256b3a">容器 B</text>
+        <rect x="522" y="182" width="66" height="36" rx="7" fill="#d4edda"/>
+        <text x="555" y="205" text-anchor="middle" font-size="11" font-weight="600" fill="#256b3a">容器 C</text>
+
+        <!-- Improvements -->
+        <rect x="365" y="240" width="230" height="38" rx="7" fill="#c8e8da"/>
+        <text x="480" y="264" text-anchor="middle" font-size="12" font-weight="600" fill="#1a6b50">✓ 资源利用率提高</text>
+        <rect x="365" y="286" width="230" height="38" rx="7" fill="#c8e8da"/>
+        <text x="480" y="310" text-anchor="middle" font-size="12" font-weight="600" fill="#1a6b50">✓ 容器模板化环境一致</text>
+
+        <!-- Remaining issues -->
+        <rect x="365" y="340" width="230" height="38" rx="7" fill="#f0d5c6"/>
+        <text x="480" y="364" text-anchor="middle" font-size="12" font-weight="600" fill="#8c3b1a">✗ 扩缩容手动</text>
+        <rect x="365" y="386" width="230" height="38" rx="7" fill="#f0d5c6"/>
+        <text x="480" y="410" text-anchor="middle" font-size="12" font-weight="600" fill="#8c3b1a">✗ 缺统一管理 + 审计</text>
+
+        <!-- Arrow Gen2 → Gen3 -->
+        <polyline points="615,250 645,250" fill="none" stroke="#b0afa9" stroke-width="1.4" marker-end="url(#ah4)"/>
+
+        <!-- Gen 3 -->
+        <rect x="650" y="80" width="270" height="340" rx="12" fill="none" stroke="#c4c3bf" stroke-width="1.6" stroke-dasharray="8,5"/>
+        <text x="668" y="100" font-size="13" font-weight="400" fill="#8c8b87">Gen 3 · K8s 原生 (ClawManager)</text>
+
+        <rect x="675" y="118" width="220" height="50" rx="10" fill="#cce0f0"/>
+        <text x="785" y="140" text-anchor="middle" font-size="14" font-weight="600" fill="#1c5a82">K8s 集群</text>
+        <text x="785" y="156" text-anchor="middle" font-size="11" font-weight="400" fill="#5a96b8">Namespace 级隔离</text>
+
+        <!-- All green -->
+        <rect x="670" y="185" width="230" height="33" rx="7" fill="#c8e8da"/>
+        <text x="785" y="207" text-anchor="middle" font-size="12" font-weight="600" fill="#1a6b50">✓ 一键批量部署 100 实例</text>
+        <rect x="670" y="226" width="230" height="33" rx="7" fill="#c8e8da"/>
+        <text x="785" y="248" text-anchor="middle" font-size="12" font-weight="600" fill="#1a6b50">✓ Pod 级隔离 + NetworkPolicy</text>
+        <rect x="670" y="267" width="230" height="33" rx="7" fill="#c8e8da"/>
+        <text x="785" y="289" text-anchor="middle" font-size="12" font-weight="600" fill="#1a6b50">✓ AI Gateway 统一路由</text>
+        <rect x="670" y="308" width="230" height="33" rx="7" fill="#c8e8da"/>
+        <text x="785" y="330" text-anchor="middle" font-size="12" font-weight="600" fill="#1a6b50">✓ 全链路审计 trace_id</text>
+        <rect x="670" y="349" width="230" height="33" rx="7" fill="#c8e8da"/>
+        <text x="785" y="371" text-anchor="middle" font-size="12" font-weight="600" fill="#1a6b50">✓ 成本透明 按部门核算</text>
+        <rect x="670" y="390" width="230" height="33" rx="7" fill="#c8e8da"/>
+        <text x="785" y="412" text-anchor="middle" font-size="12" font-weight="600" fill="#1a6b50">✓ 弹性伸缩 滚动更新</text>
+
+        <!-- Microsoft warning at bottom -->
+        <rect x="40" y="445" width="880" height="72" rx="12" fill="none" stroke="#c4c3bf" stroke-width="1.6" stroke-dasharray="8,5"/>
+        <text x="58" y="465" font-size="13" font-weight="400" fill="#8c8b87">Microsoft Security Blog · 2026.02.19</text>
+
+        <rect x="60" y="478" width="840" height="28" rx="7" fill="#f0d5c6"/>
+        <text x="480" y="497" text-anchor="middle" font-size="13" font-weight="600" fill="#8c3b1a">"应将 OpenClaw 视为带有持久凭据的不受信任代码执行环境。对于大多数环境，合适的决策可能是不部署。"</text>
+
+        <!-- Footer -->
+        <rect x="40" y="540" width="600" height="42" rx="10" fill="#ffffff" stroke="#d8d7d3" stroke-width="1"/>
+        <text x="60" y="558" font-size="13" fill="#8c8b87" letter-spacing="0.8">根本问题</text>
+        <text x="60" y="574" font-size="13" fill="#8c8b87">OpenClaw 的安全模型先天不足 —— 它被设计为个人桌面工具，不是企业级服务</text>
+      </svg>
+    </div>
+
+    <div class="prose">
+      <p>"每人一台 VPS"的时代正在过去。<strong>ClawManager</strong> 作为首个开源的 K8s 原生方案，将百人团队的环境搭建时间从半天压缩到 5 分钟，并提供了从资源隔离到全链路审计的完整能力。</p>
+      <p>但技术方案只是表层。微软安全团队 2 月的报告指出了更根本的问题：OpenClaw 能执行任意代码、能安装外部技能、能持久化凭据——<strong>无论怎么套壳隔离，这些特性在企业环境里就是定时炸弹</strong>。341 个恶意技能已经不是理论风险。</p>
+    </div>
+
+    <div class="callout warn">
+      <div class="callout-title">微软的建议</div>
+      将 OpenClaw 视为可丢弃的隔离环境运行，使用专用凭据，监控记忆篡改，随时准备销毁重建。很多企业最终选择"用 OpenClaw 的理念，但不用 OpenClaw 本身"。
+    </div>
+
+    <ul class="insight-list">
+      <li><strong>K8s 自建</strong>：ClawManager（MIT），适合有运维能力的团队</li>
+      <li><strong>容器化 VPS</strong>：Docker Compose + 反向代理，适合快速起步</li>
+      <li><strong>托管平台</strong>：Tensol / Viktor，适合不想自运维的企业</li>
+      <li><strong>云厂商方案</strong>：腾讯云 ADP / 阿里云，适合已有云资源的企业</li>
+    </ul>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Closing -->
+  <section class="section">
+    <div class="section-number">∞</div>
+    <h2>写在最后</h2>
+    <div class="prose">
+      <p>Hermes Agent 的真正创新不是"把步骤存成文件"，而是<strong>围绕技能构建了一个有门槛筛选、有条件激活、有增量改进、有容量约束的完整闭环</strong>。</p>
+      <p>对 AI Coding 最大的启示是一句话：</p>
+    </div>
+    <div class="callout success">
+      <div class="callout-title">Core Takeaway</div>
+      停止让每次对话都从零开始。让 coding agent 积累项目级的程序化记忆——不是静态规则文件，而是从实战中自动生长、持续改进的活知识。当 agent 学会了"记得上次的坑"，它就完成了从工具到同事的质变。
+    </div>
+    <div class="prose">
+      <p>当然也要清醒地看到局限：<em>当前机制主要作用于知识层面（procedural memory），而非 reasoning 层面。agent 可以学习"怎么做"，但很难自主学习"怎么想"。</em></p>
+      <p>真正的圣杯是后者——让 agent 学会这个项目的"思考方式"，而不只是"操作步骤"。这条路还很长，但 Hermes 指出了一个值得探索的方向。</p>
+    </div>
+  </section>
+
+  <footer class="page-footer">
+    Research Notes · 2026.04.09 · Built with Anthropic Sans & TencentSans
+  </footer>
+
+</div>
+
+</body>
+</html>
