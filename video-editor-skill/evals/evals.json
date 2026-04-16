@@ -1,0 +1,65 @@
+{
+  "skill_name": "video-editor",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "我有一个 demo.mp4 的视频，大概5分钟，我想截取中间第1分30秒到第2分钟的部分",
+      "expected_output": "Understand the trim intent, present a fast-trim or precise-trim command, explain trade-offs, ask for confirmation",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "帮我把 interview.mov 转成 mp4 格式，画质不要太差",
+      "expected_output": "Present H.264 conversion with reasonable CRF, explain quality setting, confirm",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "I have 3 video clips (part1.mp4, part2.mp4, part3.mp4) and I want to merge them with a crossfade transition between each",
+      "expected_output": "Use xfade filter for transitions, calculate correct offsets, handle audio crossfade, confirm",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "我有一个绿幕拍的视频 greenscreen.mp4，想把背景换成 beach.jpg",
+      "expected_output": "Use chromakey filter, composite with background image, confirm",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "这个目录下有个 captions.srt 字幕文件，帮我烧录到 lecture.mp4 里面去，字体大一点",
+      "expected_output": "Clarify hard vs soft subs, use subtitles filter with force_style FontSize, confirm",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "我的手持拍摄视频 handheld.mp4 抖得厉害，能不能稳定一下",
+      "expected_output": "Use two-pass vidstab, explain the two-step process, confirm",
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "帮我给这个视频调个色，暖色调，对比度高一点，有点电影感",
+      "expected_output": "Combine eq/colorbalance/curves/vignette for cinematic look, confirm",
+      "files": []
+    },
+    {
+      "id": 8,
+      "prompt": "I want to put my webcam recording as a small picture-in-picture in the bottom right of my gameplay video, with a white border around the webcam",
+      "expected_output": "Use scale + drawbox + overlay for bordered PiP, confirm",
+      "files": []
+    },
+    {
+      "id": 9,
+      "prompt": "我要把桌面录屏然后直接推流到B站",
+      "expected_output": "Detect OS, construct screen capture + RTMP push command with proper encoding, ask for stream key, confirm",
+      "files": []
+    },
+    {
+      "id": 10,
+      "prompt": "这个竖屏视频想转成横屏，背景用模糊效果填充",
+      "expected_output": "Use filter_complex with blurred scale + centered overlay, confirm",
+      "files": []
+    }
+  ]
+}
