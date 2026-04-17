@@ -1,0 +1,144 @@
+{
+  "name": "Google-Gemini-Design-Md",
+  "cn_name": "Google Gemini Design 星芒前端设计师",
+  "description": "A specialized frontend design skill for generating Awwwards-caliber web interfaces inspired by Google Gemini's visual language and advanced CSS techniques. Provides a curated library of 186+ style prompts across 11 categories, including 66 world-class brand design system references.",
+  "version": "1.1.0",
+  "author": "Assistant",
+  "license": "MIT",
+  "category": "frontend",
+  "tags": [
+    "design",
+    "frontend",
+    "css",
+    "gemini",
+    "ui",
+    "ux",
+    "aesthetics",
+    "awwwards",
+    "brand-reference",
+    "design-system",
+    "design-tokens"
+  ],
+  "references": [
+    "references/"
+  ],
+  "stats": {
+    "total_style_prompts": 186,
+    "categories": 11,
+    "brand_references": 66,
+    "reference_files": 67
+  },
+  "categories": {
+    "A": {
+      "name": "Gemini Core",
+      "cn_name": "Gemini 核心美学",
+      "count": 12
+    },
+    "B": {
+      "name": "Advanced Glassmorphism",
+      "cn_name": "高阶毛玻璃",
+      "count": 14
+    },
+    "C": {
+      "name": "Luminescence & Gradients",
+      "cn_name": "发光体与流体渐变",
+      "count": 14
+    },
+    "D": {
+      "name": "Fluid Typography",
+      "cn_name": "流体排版与无界空间",
+      "count": 12
+    },
+    "E": {
+      "name": "Micro-Interactions",
+      "cn_name": "微交互与呼吸动效",
+      "count": 12
+    },
+    "F": {
+      "name": "AI Interface",
+      "cn_name": "AI 界面专属",
+      "count": 10
+    },
+    "G": {
+      "name": "Awwwards Experimental",
+      "cn_name": "获奖级实验性",
+      "count": 14
+    },
+    "H": {
+      "name": "Aesthetic Movements",
+      "cn_name": "视觉运动风格",
+      "count": 12
+    },
+    "I": {
+      "name": "Color Palette Presets",
+      "cn_name": "配色方案预设",
+      "count": 10
+    },
+    "J": {
+      "name": "Layout & Structure",
+      "cn_name": "布局与结构",
+      "count": 10
+    },
+    "K": {
+      "name": "World-Class Brand References",
+      "cn_name": "世界级大厂品牌风格参考",
+      "count": 66,
+      "subcategories": {
+        "K-1": {
+          "name": "AI Platforms",
+          "cn_name": "AI 平台",
+          "count": 13,
+          "path": "references/01-AI-Platforms/"
+        },
+        "K-2": {
+          "name": "Developer Tools",
+          "cn_name": "开发者工具",
+          "count": 13,
+          "path": "references/02-Developer-Tools/"
+        },
+        "K-3": {
+          "name": "Design & Build",
+          "cn_name": "设计与建站",
+          "count": 4,
+          "path": "references/03-Design-Build/"
+        },
+        "K-4": {
+          "name": "SaaS & Productivity",
+          "cn_name": "SaaS 与效率工具",
+          "count": 10,
+          "path": "references/04-SaaS-Productivity/"
+        },
+        "K-5": {
+          "name": "E-Commerce & Retail",
+          "cn_name": "电商与零售",
+          "count": 4,
+          "path": "references/05-E-Commerce-Retail/"
+        },
+        "K-6": {
+          "name": "Finance & Crypto",
+          "cn_name": "金融与加密",
+          "count": 6,
+          "path": "references/06-Finance-Crypto/"
+        },
+        "K-7": {
+          "name": "Entertainment & Media",
+          "cn_name": "娱乐与媒体",
+          "count": 4,
+          "path": "references/07-Entertainment-Media/"
+        },
+        "K-8": {
+          "name": "Automotive & Luxury",
+          "cn_name": "汽车与奢华",
+          "count": 6,
+          "path": "references/08-Automotive-Luxury/"
+        },
+        "K-9": {
+          "name": "Tech Giants",
+          "cn_name": "科技巨头",
+          "count": 6,
+          "path": "references/09-Tech-Giants/"
+        }
+      }
+    }
+  }
+}
