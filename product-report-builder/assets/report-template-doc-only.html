@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{title}} - 产品规划汇报</title>
+<style>
+  :root {
+    --primary: #12B7F5;
+    --primary-dark: #0E9FD8;
+    --primary-light: #E8F7FE;
+    --bg: #F5F7FA;
+    --white: #FFFFFF;
+    --text: #1D2129;
+    --text-secondary: #4E5969;
+    --text-light: #86909C;
+    --border: #E5E6EB;
+    --success: #00B42A;
+    --warning: #FF7D00;
+    --orange: #FF6A00;
+    --purple: #722ED1;
+    --shadow: 0 4px 20px rgba(0,0,0,0.06);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    padding: 40px 24px 80px;
+  }
+
+  /* ============ 纯文档布局（全宽居中） ============ */
+  .page {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  /* 封面 */
+  .cover {
+    background: linear-gradient(135deg, {{cover_gradient_start|#12B7F5}} 0%, {{cover_gradient_end|#722ED1}} 100%);
+    border-radius: 20px;
+    padding: 56px 44px;
+    color: white;
+    margin-bottom: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::after {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 240px; height: 240px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: 40%;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+  }
+  .cover .tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(4px);
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 13px;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+  }
+  .cover h1 {
+    font-size: 34px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    position: relative;
+    z-index: 1;
+  }
+  .cover .subtitle {
+    font-size: 16px;
+    opacity: 0.85;
+    position: relative;
+    z-index: 1;
+  }
+  .cover .meta {
+    margin-top: 28px;
+    font-size: 13px;
+    opacity: 0.6;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* 章节标题 */
+  .section { margin-bottom: 40px; }
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .section-title .num {
+    width: 36px; height: 36px;
+    background: var(--primary); color: white;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 16px;
+    flex-shrink: 0;
+  }
+  .section-title h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  /* 产品定位描述块 */
+  .positioning {
+    background: linear-gradient(135deg, var(--primary-light) 0%, #F0E8FF 100%);
+    border-radius: 16px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+    border-left: 4px solid var(--primary);
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+  }
+  .positioning strong { color: var(--primary-dark); }
+
+  /* 痛点网格 */
+  .pain-points {
+    display: grid;
+    grid-template-columns: repeat({{pain_columns|2}}, 1fr);
+    gap: 16px;
+    margin-top: 20px;
+  }
+  .pain-point {
+    background: var(--white);
+    border-radius: 14px;
+    padding: 24px 18px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    text-align: center;
+  }
+  .pain-point .icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    margin: 0 auto 12px;
+  }
+  .pain-point:nth-child(1) .icon { background: #FFF3E8; }
+  .pain-point:nth-child(2) .icon { background: #FFECE8; }
+  .pain-point:nth-child(3) .icon { background: #E8F7FE; }
+  .pain-point:nth-child(4) .icon { background: #F0E8FF; }
+  .pain-point h4 { font-size: 15px; font-weight: 600; margin-bottom: 8px; color: var(--text); }
+  .pain-point p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+  /* 痛点卡片版 — 带编号+标题+描述的双列卡片（AI试聊风格） */
+  .pain-point .pp-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    text-align: left;
+  }
+  .pain-point .pp-num {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background: var(--primary);
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .pain-point .pp-header h4 {
+    margin: 0;
+    font-size: 16px;
+  }
+  /* 卡片版痛点的描述左对齐 */
+  .pain-point:has(.pp-header) {
+    text-align: left;
+    padding: 20px 24px;
+  }
+  .pain-point:has(.pp-header) p {
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  /* 设计原则标签 */
+  .principle-tags { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+  .principle-tag {
+    background: var(--white); border-radius: 14px; padding: 16px 20px;
+    box-shadow: var(--shadow); border: 1px solid var(--border); flex: 1; min-width: 160px;
+  }
+  .pt-icon { font-size: 24px; margin-bottom: 8px; }
+  .pt-name { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .pt-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+  /* 功能模块卡片 — 纯文档模式：不可点击，无data-demo，无边框装饰 */
+  .feature-card {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 28px 32px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    position: relative;
+    transition: all 0.25s ease;
+  }
+  .feature-card:hover {
+    box-shadow: 0 8px 30px rgba(18,183,245,0.08);
+    transform: translateY(-1px);
+  }
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+  }
+  .feature-card:nth-child(1)::before { background: var(--primary); }
+  .feature-card:nth-child(2)::before { background: var(--success); }
+  .feature-card:nth-child(3)::before { background: var(--orange); }
+  .feature-card:nth-child(4)::before { background: var(--purple); }
+
+  .feature-card .fc-label {
+    display: inline-block; font-size: 11px; font-weight: 600;
+    color: var(--primary); background: var(--primary-light); padding: 3px 10px; border-radius: 8px; margin-bottom: 10px;
+  }
+  .feature-card .feature-header { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+  .feature-card .feature-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;
+  }
+  .feature-card:nth-child(1) .feature-icon { background: var(--primary-light); }
+  .feature-card:nth-child(2) .feature-icon { background: #E8FFEA; }
+  .feature-card:nth-child(3) .feature-icon { background: #FFF3E8; }
+  .feature-card:nth-child(4) .feature-icon { background: #F0E8FF; }
+  .feature-card .feature-header h3 { font-size: 18px; font-weight: 700; }
+  .feature-card .feature-row { display: flex; gap: 24px; margin-top: 12px; }
+  .feature-card .feature-row .label {
+    font-size: 13px; color: var(--text-light); white-space: nowrap; min-width: 70px; padding-top: 2px;
+  }
+  .feature-card .feature-row .value { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+
+  /* 流程步骤可视化 */
+  .flow-step { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .flow-item {
+    background: linear-gradient(135deg, #f0f4ff, #eef0ff); border: 1px solid #dce4ff;
+    padding: 6px 14px; border-radius: 20px; font-size: 13px; color: var(--text-secondary);
+    white-space: nowrap;
+  }
+  .flow-arrow { color: var(--primary); font-weight: 700; font-size: 14px; }
+
+  /* 核心亮点框 */
+  .highlight-box {
+    background: linear-gradient(135deg, #FFF9E6 0%, #FFF1E0 100%);
+    border-radius: 16px; padding: 24px 28px; margin-top: 24px; border: 1px solid #FFE4BA;
+  }
+  .highlight-box h4 { font-size: 15px; font-weight: 700; color: var(--orange); margin-bottom: 14px; }
+  .highlight-box ul { list-style: none; padding: 0; }
+  .highlight-box ul li {
+    font-size: 14px; color: var(--text-secondary); line-height: 1.8;
+    padding-left: 20px; position: relative;
+  }
+  .highlight-box ul li::before { content: '●'; position: absolute; left: 0; color: var(--orange); }
+
+  /* 权益对比卡 */
+  .pricing-cards { display: grid; grid-template-columns: repeat({{price_columns|2}}, 1fr); gap: 16px; margin-bottom: 20px; }
+  .pricing-card {
+    background: var(--white); border-radius: 14px; padding: 24px 20px;
+    box-shadow: var(--shadow); border: 1px solid var(--border); text-align: center; position: relative;
+  }
+  .pricing-card.featured { border: 2px solid var(--primary); }
+  .pricing-card.featured::after {
+    content: '推荐'; position: absolute; top: -12px; right: 16px;
+    background: var(--primary); color: white; font-size: 11px; font-weight: 600;
+    padding: 3px 10px; border-radius: 10px;
+  }
+  .pc-role { font-size: 12px; color: var(--text-light); margin-bottom: 4px; }
+  .pc-name { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+  .pc-quota { font-size: 26px; font-weight: 700; color: var(--primary); margin-bottom: 10px; }
+  .pc-quota span { font-size: 13px; font-weight: 400; color: var(--text-light); }
+  .pc-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.65; }
+
+  .pricing-note {
+    background: var(--white); border-radius: 14px; padding: 18px 24px;
+    box-shadow: var(--shadow); border: 1px solid var(--border); font-size: 14px;
+    color: var(--text-secondary); line-height: 1.75;
+  }
+
+  /* 定价表格 */
+  .pricing-table { width: 100%; border-collapse: separate; border-spacing: 0; border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); }
+  .pricing-table th { background: var(--primary); color: white; font-weight: 600; font-size: 14px; padding: 14px 20px; text-align: center; }
+  .pricing-table td { background: var(--white); font-size: 14px; padding: 14px 20px; text-align: center; color: var(--text-secondary); border-bottom: 1px solid var(--border); }
+  .pricing-table tr:last-child td { border-bottom: none; }
+  .pricing-table .highlight-row td { background: var(--primary-light); font-weight: 600; color: var(--primary-dark); }
+  .pricing-table .price { font-size: 20px; font-weight: 700; color: var(--primary); }
+
+  /* 用户类型对比卡 */
+  .user-types { display: grid; grid-template-columns: repeat({{type_columns|2}}, 1fr); gap: 16px; margin-bottom: 28px; }
+  .user-type-card {
+    background: var(--white); border-radius: 14px; padding: 24px 20px;
+    box-shadow: var(--shadow); border: 1px solid var(--border); text-align: center;
+  }
+  .user-type-card.featured { border: 2px solid var(--primary); position: relative; }
+  .user-type-card.featured::after {
+    content: '{{featured_label|推荐}}'; position: absolute; top: -12px; right: 16px;
+    background: var(--primary); color: white; font-size: 11px; font-weight: 600;
+    padding: 3px 10px; border-radius: 10px;
+  }
+  .user-type-card .type-name { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .user-type-card .type-price { font-size: 22px; font-weight: 700; color: var(--primary); margin-bottom: 10px; }
+  .user-type-card .type-price span { font-size: 13px; font-weight: 400; color: var(--text-light); }
+  .user-type-card .type-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+  /* 超额计费横幅 */
+  .extra-fee {
+    background: linear-gradient(135deg, var(--primary-light) 0%, #F0E8FF 100%);
+    border-radius: 14px; padding: 20px 28px; margin-top: 16px; display: flex; align-items: center; gap: 16px;
+  }
+  .extra-fee .fee-amount { font-size: 28px; font-weight: 700; color: var(--primary); white-space: nowrap; }
+  .extra-fee .fee-amount span { font-size: 14px; font-weight: 400; color: var(--text-secondary); }
+  .extra-fee .fee-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+
+  /* 页脚 */
+  .footer { text-align: center; padding-top: 40px; border-top: 1px solid var(--border); margin-top: 48px; }
+  .footer p { font-size: 13px; color: var(--text-light); }
+
+  /* 竞品卡片 */
+  .competitor-list { display: grid; grid-template-columns: repeat({{comp_columns|2}}, 1fr); gap: 16px; margin-top: 20px; }
+  .competitor-card {
+    background: var(--white); border-radius: 14px; padding: 24px;
+    box-shadow: var(--shadow); border: 1px solid var(--border);
+  }
+  .competitor-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .competitor-header h3 { font-size: 16px; font-weight: 700; color: var(--text); }
+  .comp-tag { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 10px; white-space: nowrap; }
+  .tag-subscribe { background: #E8F7FE; color: var(--primary-dark); }
+  .tag-pergroup { background: #E8FFEA; color: var(--success); }
+  .tag-fun { background: #FFF3E8; color: var(--warning); }
+  .tag-safe { background: #F0E8FF; color: var(--purple); }
+  .comp-desc { font-size: 13px; color: var(--text-secondary); margin-bottom: 14px; line-height: 1.5; }
+  .comp-detail { display: flex; flex-direction: column; gap: 6px; }
+  .comp-detail span { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .comp-detail strong { color: var(--text); }
+
+  /* 子模块 */
+  .sub-section { margin-top: 32px; }
+  .sub-section-title {
+    font-size: 18px; font-weight: 700; color: var(--text);
+    margin-bottom: 20px; padding-left: 12px;
+    border-left: 3px solid var(--primary);
+  }
+
+  /* 策略引导语 — 章节开头的提纲挈领描述 */
+  .strategy-intro {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px dashed #FFE4BA;
+  }
+  .strategy-intro strong {
+    color: var(--orange);
+  }
+
+  /* 响应式 */
+  @media (max-width: 768px) {
+    body { padding: 24px 16px 60px; }
+    .page { max-width: 100%; }
+    .cover { padding: 36px 28px; }
+    .cover h1 { font-size: 26px; }
+    .pain-points { grid-template-columns: 1fr; }
+    .pricing-cards { grid-template-columns: 1fr; }
+    .user-types { grid-template-columns: 1fr; }
+    .competitor-list { grid-template-columns: 1fr; }
+    .principle-tags { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- 封面 -->
+  <div class="cover">
+    <div class="tag">{{cover_tag|产品规划汇报}}</div>
+    <h1>{{title}}</h1>
+    <div class="subtitle">{{subtitle|}}</div>
+    <div class="meta">{{meta_date|}} · {{team_name|QQ增值团队}}</div>
+  </div>
+
+  {{document_content}}
+
+  <!-- 页脚 -->
+  <div class="footer">
+    <p>{{team_name|QQ增值团队}} · {{footer_date|}}</p>
+  </div>
+
+</div>
+
+</body>
+</html>
