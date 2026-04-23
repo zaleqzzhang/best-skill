@@ -1,0 +1,96 @@
+version: "3.9"
+
+services:
+  # Redis 任务队列后端
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+  # ============================================================
+  # LLM 服务: 本地 vLLM 部署 Qwen3-4B-Instruct-2507 GGUF Q4_K_M
+  # 量化后仅 ~2.3GB 磁盘、~3GB 显存
+  # ============================================================
+  vllm:
+    image: vllm/vllm-openai:latest
+    ports:
+      - "8100:8000"
+    volumes:
+      - ./models:/models
+    command: >
+      --model /models/Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf
+      --tokenizer Qwen/Qwen3-4B-Instruct-2507
+      --served-model-name Qwen3-4B-Instruct-2507
+      --gpu-memory-utilization 0.25
+      --max-model-len 32768
+      --tensor-parallel-size 1
+      --host 0.0.0.0
+      --port 8000
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+
+  # ============================================================
+  # FastAPI 主服务 + TTS 模型（本地加载 Qwen3-TTS）
+  # ============================================================
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./output:/app/output
+      - ./models:/app/models
+    depends_on:
+      - redis
+      - vllm
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - LLM_BASE_URL=http://vllm:8000/v1
+      - TTS_MODEL_LOCAL_DIR=/app/models
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+
+  # ============================================================
+  # Celery Worker（需要 GPU 访问来运行 TTS 模型）
+  # ============================================================
+  worker:
+    build: .
+    command: celery -A src.tasks.celery_app worker --loglevel=info --concurrency=1
+    env_file:
+      - .env
+    volumes:
+      - ./output:/app/output
+      - ./models:/app/models
+    depends_on:
+      - redis
+      - vllm
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - LLM_BASE_URL=http://vllm:8000/v1
+      - TTS_MODEL_LOCAL_DIR=/app/models
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+
+volumes:
+  redis-data:

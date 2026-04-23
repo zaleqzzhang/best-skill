@@ -1,0 +1,45 @@
+# novel-audiobook 依赖清单（本地部署模式）
+
+# === Web 框架 ===
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+python-multipart>=0.0.12
+
+# === 文件解析 ===
+PyPDF2>=3.0.0
+ebooklib>=0.18
+python-docx>=1.1.0
+chardet>=5.2.0
+
+# === LLM 调用 (本地 vLLM OpenAI 兼容接口) ===
+openai>=1.50.0
+httpx>=0.27.0
+
+# === TTS 本地模型 (Qwen3-TTS 开源) ===
+qwen-tts>=0.1.0
+torch>=2.4.0
+soundfile>=0.12.0
+# 可选: FlashAttention 2 降低显存
+# flash-attn>=2.6.0
+
+# === 音频处理 ===
+pydub>=0.25.1
+
+# === 异步任务 ===
+celery[redis]>=5.4.0
+redis>=5.0.0
+
+# === 工具 ===
+pydantic>=2.9.0
+pydantic-settings>=2.5.0
+python-dotenv>=1.0.0
+loguru>=0.7.0
+aiofiles>=24.1.0
+
+# === 测试 ===
+pytest>=8.0
+pytest-cov>=5.0
+pytest-asyncio>=0.24.0
+httpx>=0.27.0
+ruff>=0.6.0
+black>=24.0
