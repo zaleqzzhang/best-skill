@@ -1,0 +1,24 @@
+{# Single trip card partial (for reference; currently inlined in index.html) #}
+<article class="trip-card">
+  <div class="trip-cover"
+       {% if trip.cover_image %}style="background-image:url('{{ trip.cover_image }}')"{% endif %}>
+    {% if trip.theme %}<div class="theme-badge">{{ trip.theme }}</div>{% endif %}
+    {% if trip.has_password %}<div class="lock-badge">🔒 加密</div>{% endif %}
+  </div>
+  <div class="trip-body">
+    <div class="trip-title">{{ trip.title }}</div>
+    {% if trip.date_range %}<div class="trip-meta">📅 {{ trip.date_range }}</div>{% endif %}
+    <div class="trip-spec">
+      {% if trip.days %}<span>🗓 {{ trip.days }} 天</span>{% endif %}
+      {% if trip.people %}<span>👥 {{ trip.people }} 人</span>{% endif %}
+    </div>
+    <div class="trip-actions">
+      {% if trip.urls.eop %}
+        <a class="btn btn-primary" href="{{ trip.urls.eop }}" target="_blank">🇨🇳 国内版</a>
+      {% endif %}
+      {% if trip.urls.vercel %}
+        <a class="btn btn-secondary" href="{{ trip.urls.vercel }}" target="_blank">🌏 海外版</a>
+      {% endif %}
+    </div>
+  </div>
+</article>

@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>邯郸·安阳·登封·巩义 — 文化遗产自驾</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* 宋式调色盘：天青·赭石·靛蓝·月白·竹青 */
+  --sky:#7BA5A8;--rust:#B07B5F;--indigo:#5B7B94;--moon:#F2EFEA;--bamboo:#8B9E82;
+  --ink:#2D2D2D;--ink2:#555;--ink3:#888;--ink4:#B5B0A8;
+  --paper:#F6F4F0;--card:#FFFEFB;--warm:#FAF6F0;
+  --line:rgba(0,0,0,.07);--radius:10px;
+  /* 每日主题色 */
+  --d1:#9E7B65;--d2:#6E9176;--d3:#5B7B94;--d4:#B07070;--d5:#8878A0;--d6:#B08E5A;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'PingFang SC','Hiragino Sans GB','Noto Sans SC',-apple-system,sans-serif;background:var(--paper);color:var(--ink);line-height:1.8;overflow-x:hidden;-webkit-font-smoothing:antialiased;font-size:15px}
+
+/* === Hero === */
+.hero{padding:56px 24px 44px;text-align:center;background:linear-gradient(180deg,var(--warm) 0%,var(--paper) 100%);position:relative;overflow:hidden}
+/* 云雷纹暗纹（青铜器纹样）- 四周浓 中心淡，参照青铜器主次排布 */
+.hero::before{
+  content:'';position:absolute;inset:0;pointer-events:none;opacity:.1;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'><g fill='none' stroke='%232D2D2D' stroke-width='1'><path d='M2 2h14v14h-8v-8h2v2M32 2h14v14h-8v-8h2v2M2 32h14v14h-8v-8h2v2M32 32h14v14h-8v-8h2v2'/></g></svg>");
+  background-size:48px 48px;
+  -webkit-mask-image:radial-gradient(ellipse at center, transparent 15%, rgba(0,0,0,.3) 40%, #000 75%);
+  mask-image:radial-gradient(ellipse at center, transparent 15%, rgba(0,0,0,.3) 40%, #000 75%);
+}
+/* 顶部装饰条 */
+.hero::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,transparent 0%,var(--rust) 20%,var(--indigo) 50%,var(--bamboo) 80%,transparent 100%);
+  opacity:.3;
+}
+.hero-deco{display:flex;justify-content:center;align-items:center;gap:16px;margin-bottom:24px;position:relative}
+.hero-deco .line{width:40px;height:1px;background:linear-gradient(90deg,transparent,var(--ink4),transparent)}
+.hero-deco .orn{width:14px;height:14px;position:relative;opacity:.5}
+.hero-deco .orn::before{content:'';position:absolute;inset:0;border:1px solid var(--rust);transform:rotate(45deg)}
+.hero-deco .orn::after{content:'';position:absolute;inset:4px;background:var(--rust);border-radius:50%;opacity:.4}
+.hero-deco i{font-style:normal;font-size:.72em;color:var(--ink3);letter-spacing:4px}
+.hero h1{font-family:'Noto Serif SC',serif;font-size:2.2em;font-weight:700;letter-spacing:10px;color:var(--ink);position:relative;line-height:1.4}
+.hero .sub{font-size:.86em;color:var(--ink3);letter-spacing:3px;margin-top:10px;position:relative}
+.hero .badges{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:22px;position:relative}
+.hero .badge{padding:5px 14px;font-size:.68em;color:var(--ink3);letter-spacing:1px;background:rgba(255,254,251,.85);border-radius:20px;box-shadow:0 1px 4px rgba(0,0,0,.04);backdrop-filter:blur(4px)}
+
+/* === Tabs === */
+.tabs-wrap{position:sticky;top:0;z-index:900;background:rgba(246,244,240,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.tabs{display:flex;overflow-x:auto;padding:0 12px;scrollbar-width:none;gap:2px}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:12px 14px;font-size:.74em;cursor:pointer;color:var(--ink4);transition:.25s;white-space:nowrap;letter-spacing:1.5px;border-radius:6px 6px 0 0;position:relative}
+.tab:hover{color:var(--ink2)}
+.tab.active{color:var(--ink);font-weight:600;background:var(--card)}
+
+.container{max-width:720px;margin:0 auto;padding:20px 16px}
+
+/* === Section === */
+.day-section{display:none;animation:fadeIn .4s}
+.day-section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* Day header — 左侧色块 accent bar + 底部渐变线 */
+.day-header{display:flex;gap:16px;align-items:flex-start;padding:20px 0 18px;margin-bottom:0;position:relative}
+.day-header::after{content:'';position:absolute;bottom:0;left:20px;right:20px;height:1px;background:linear-gradient(90deg,var(--ink4) 0%,transparent 60%);opacity:.4}
+.day-accent{width:4px;border-radius:2px;min-height:48px;flex-shrink:0;margin-top:2px;position:relative}
+.day-accent::before{content:'';position:absolute;top:-2px;left:-2px;right:-2px;height:8px;background:inherit;border-radius:50%;opacity:.35}
+.day-accent::after{content:'';position:absolute;bottom:-2px;left:-2px;right:-2px;height:8px;background:inherit;border-radius:50%;opacity:.35}
+.day-header-text{flex:1}
+.day-header-text h2{font-family:'Noto Serif SC',serif;font-size:1.1em;font-weight:600;letter-spacing:2px}
+.day-header-text .date{font-size:.72em;color:var(--ink3);margin-top:2px;letter-spacing:1.5px}
+.day-header-text .route{font-size:.7em;color:var(--ink4);margin-top:1px;letter-spacing:.5px}
+
+/* === Card 容器 === */
+.card{background:var(--card);border-radius:var(--radius);padding:18px 20px;margin:12px 0;box-shadow:0 1px 6px rgba(0,0,0,.03)}
+.card h4{font-family:'Noto Serif SC',serif;font-size:.84em;font-weight:600;color:var(--ink);margin-bottom:8px;letter-spacing:1px}
+.card p,.card li{font-size:.8em;color:var(--ink2);line-height:1.8}
+.card ul{padding-left:16px}
+
+/* Summary — 主题色浅底，视觉重点 + 回字纹角饰 */
+.summary{border-radius:var(--radius);padding:0;margin:12px 0;overflow:hidden;position:relative}
+.summary-bar{height:3px}
+.summary-body{padding:18px 20px;position:relative}
+/* 右上角·回字纹（石碑刻线，三重嵌套方框） */
+.summary-body::after{
+  content:'';position:absolute;top:12px;right:12px;width:28px;height:28px;opacity:.16;pointer-events:none;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'><g fill='none' stroke='%232D2D2D' stroke-width='1'><rect x='2' y='2' width='24' height='24'/><rect x='7' y='7' width='14' height='14'/><rect x='12' y='12' width='4' height='4'/></g></svg>");
+  background-repeat:no-repeat;
+}
+.summary-body .st{font-family:'Noto Serif SC',serif;font-size:.8em;margin-bottom:6px;letter-spacing:2px;position:relative;padding-left:14px}
+.summary-body .st::before{content:'';position:absolute;left:0;top:6px;width:6px;height:6px;border-radius:1px;transform:rotate(45deg);background:currentColor;opacity:.5}
+.summary-body p{font-size:.82em;color:var(--ink2);position:relative;z-index:1}
+/* 各日摘要底色 */
+.summary.bg-d1{background:#F5EDE7}.summary.bg-d1 .st{color:var(--d1)}
+.summary.bg-d2{background:#EBF2EC}.summary.bg-d2 .st{color:var(--d2)}
+.summary.bg-d3{background:#E9EFF5}.summary.bg-d3 .st{color:var(--d3)}
+.summary.bg-d4{background:#F5EBEB}.summary.bg-d4 .st{color:var(--d4)}
+.summary.bg-d5{background:#EFEBF4}.summary.bg-d5 .st{color:var(--d5)}
+.summary.bg-d6{background:#F5F0E6}.summary.bg-d6 .st{color:var(--d6)}
+
+/* XHS card — 暖底 */
+.xhs{background:var(--warm);border-radius:var(--radius);padding:14px 18px;margin:10px 0;border:1px solid rgba(176,123,95,.08)}
+.xhs .xt{font-size:.68em;color:var(--rust);letter-spacing:2px;font-weight:600;margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.xhs .xt::before{content:'';display:inline-block;width:12px;height:12px;border-radius:3px;background:linear-gradient(135deg,#FF6B6B,#FF2442);flex-shrink:0}
+.xhs .xc{font-size:.76em;color:var(--ink3);line-height:1.85}
+
+/* Timeline wrapper — 白卡片+丝绸暗纹 */
+.tl-wrap{background:var(--card);border-radius:var(--radius);padding:18px 20px 12px 20px;margin:10px 0;box-shadow:0 1px 6px rgba(0,0,0,.03);position:relative;overflow:hidden}
+/* 右下角丝绸暗纹 */
+.tl-wrap::before{
+  content:'';position:absolute;bottom:-20px;right:-20px;width:120px;height:120px;opacity:.04;pointer-events:none;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><g fill='none' stroke='%232D2D2D' stroke-width='.8'><circle cx='60' cy='60' r='50'/><circle cx='60' cy='60' r='35'/><circle cx='60' cy='60' r='20'/><path d='M60 10 Q75 30 60 60 Q45 90 60 110'/><path d='M10 60 Q30 75 60 60 Q90 45 110 60'/><path d='M25 25 Q60 45 95 95'/><path d='M95 25 Q60 45 25 95'/></g></svg>");
+  background-repeat:no-repeat;
+}
+.tl-wrap-title{font-family:'Noto Serif SC',serif;font-size:.76em;color:var(--ink4);letter-spacing:2px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--line);position:relative;z-index:1;display:flex;align-items:center;gap:6px}
+.tl-wrap-title::before{content:'';width:4px;height:12px;background:var(--ink4);opacity:.4;border-radius:1px}
+
+/* === Timeline === */
+.timeline{padding:0 0 4px 24px;position:relative}
+.timeline::before{content:'';position:absolute;left:5px;top:6px;bottom:12px;width:1.5px;background:linear-gradient(to bottom,var(--ink4) 0%,transparent 100%)}
+.tl-item{position:relative;margin-bottom:22px;padding-left:22px}
+.tl-item::before{content:'';position:absolute;left:-22px;top:9px;width:7px;height:7px;border-radius:50%;background:var(--ink4);z-index:1}
+.tl-item.highlight::before{width:9px;height:9px;left:-23px;top:8px;border-radius:50%;background:var(--sky);box-shadow:0 0 0 3px rgba(123,165,168,.15)}
+.tl-item.drive::before{background:var(--bamboo)}
+.tl-item.food::before{background:var(--rust);box-shadow:0 0 0 3px rgba(176,123,95,.1)}
+.tl-time{font-size:.7em;color:var(--ink4);letter-spacing:.5px}
+.tl-title{font-size:.88em;font-weight:600;margin-top:1px}
+.tl-desc{font-size:.78em;color:var(--ink3);margin-top:3px;line-height:1.75}
+
+/* Tags — 小色块 */
+.tl-tag{display:inline-block;font-size:.64em;padding:3px 10px;border-radius:4px;margin-top:5px;letter-spacing:.5px;font-weight:500}
+.tag-heritage{color:#fff;background:var(--indigo)}
+.tag-museum{color:#fff;background:#8B7BA0}
+.tag-food{color:#fff;background:var(--rust)}
+.tag-drive{color:#fff;background:var(--bamboo)}
+.tag-free{color:var(--bamboo);background:rgba(139,158,130,.1);border:1px solid rgba(139,158,130,.2)}
+
+/* Photos — 纹样作底，避免白边/空白 */
+.tl-photo{
+  margin-top:10px;border-radius:var(--radius);overflow:hidden;
+  background-color:#EFEAE2;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'><g fill='none' stroke='%23B07B5F' stroke-width='.6' opacity='.5'><path d='M15 30 Q30 15 45 30 Q30 45 15 30 Z'/><circle cx='30' cy='30' r='2'/><path d='M5 5 Q15 15 5 25 M55 5 Q45 15 55 25 M5 55 Q15 45 5 35 M55 55 Q45 45 55 35'/></g></svg>");
+  background-size:60px 60px;
+  box-shadow:inset 0 0 0 1px rgba(176,123,95,.08);
+  position:relative;
+}
+.tl-photo img{width:100%;height:auto;display:block;cursor:pointer;transition:transform .4s;position:relative;z-index:1}
+.tl-photo img:hover{transform:scale(1.01)}
+.tl-photo .pc{font-size:.68em;color:var(--ink4);padding:7px 12px;background:var(--card);letter-spacing:.5px;border-top:1px solid var(--line);position:relative;z-index:1}
+/* 并排两图 */
+.tl-photos{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.tl-photos .tl-photo{min-width:0;display:flex;flex-direction:column}
+.tl-photos .tl-photo img{flex:1;min-height:0;object-fit:cover;aspect-ratio:4/3}
+/* 单图——完整显示，按原比例 */
+.tl-photo:not(.tl-photos > *) img{aspect-ratio:auto}
+
+/* Route map */
+.route-map{text-align:center;padding:4px 0}
+.route-map img{width:100%;max-width:640px;border-radius:var(--radius);cursor:pointer}
+
+/* Tables */
+table.bt{width:100%;border-collapse:collapse;font-size:.78em;margin:6px 0}
+table.bt td,table.bt th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left}
+table.bt th{font-size:.7em;color:var(--ink4);font-weight:500;letter-spacing:1px}
+table.bt td:last-child{text-align:right;font-weight:500}
+table.bt .free{color:var(--bamboo)}
+
+/* Warning */
+.warn{background:rgba(176,112,112,.04);border-left:3px solid var(--d4);border-radius:0 var(--radius) var(--radius) 0;padding:12px 16px;margin:12px 0}
+.warn h4{font-size:.76em;color:var(--d4);font-weight:600;letter-spacing:1px;margin-bottom:3px}
+.warn p,.warn li{font-size:.74em;color:var(--ink3)}
+.warn ul{padding-left:16px}
+
+/* Lightbox */
+.lightbox{display:none;position:fixed;inset:0;background:rgba(45,45,45,.93);z-index:2000;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(6px)}
+.lightbox.active{display:flex}
+.lightbox img{max-width:94%;max-height:90%;object-fit:contain;border-radius:6px}
+
+/* Bottom nav — 底部导航，明显可点击 */
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:1000;background:rgba(255,254,251,.97);backdrop-filter:blur(16px);padding:6px 4px env(safe-area-inset-bottom,6px) 4px;border-top:1px solid var(--line);box-shadow:0 -2px 12px rgba(0,0,0,.04)}
+.bnav{display:flex;justify-content:space-around;align-items:center;gap:2px}
+.bi{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 2px;cursor:pointer;font-size:9px;color:var(--ink3);text-decoration:none;letter-spacing:1px;transition:all .25s;border-radius:8px;user-select:none;-webkit-tap-highlight-color:transparent;min-height:42px}
+.bi:hover,.bi:active{background:rgba(176,123,95,.06);color:var(--ink2)}
+.bi.active{color:var(--rust);background:rgba(176,123,95,.08)}
+.bi.active .n{color:var(--rust)}
+.bi .n{font-family:'Noto Serif SC',serif;font-size:15px;font-weight:600;color:var(--ink2);transition:color .25s;line-height:1;pointer-events:none}
+.bi .lbl{font-size:9px;margin-top:2px;opacity:.8;pointer-events:none}
+
+@media(max-width:768px){
+  .bottom-nav{display:block}body{padding-bottom:66px}
+  .hero{padding:40px 16px 32px}.hero h1{font-size:1.65em;letter-spacing:6px}
+  .hero .sub{font-size:.8em;letter-spacing:2px}
+  .tab{padding:10px 11px;font-size:.7em}
+  .container{padding:14px 14px}
+  .tl-photos .tl-photo img{height:auto}
+  .hero-deco .line{width:20px}
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-deco"><span class="line"></span><span class="orn"></span><i>文化遗产自驾</i><span class="orn"></span><span class="line"></span></div>
+  <h1>邯郸 · 安阳 · 登封 · 巩义</h1>
+  <div class="sub">北朝石窟 · 殷商文明 · 天地之中 · 北宋皇陵</div>
+  <div class="badges">
+    <span class="badge">六天五晚</span>
+    <span class="badge">2026.4.28 — 5.3</span>
+    <span class="badge">自驾 ~650km</span>
+    <span class="badge">三人行</span>
+    <span class="badge">约 ¥10,700</span>
+  </div>
+</div>
+
+<div class="tabs-wrap"><div class="tabs">
+  <div class="tab active" data-day="overview">总览</div>
+  <div class="tab" data-day="day1">壹 · 邯郸</div>
+  <div class="tab" data-day="day2">贰 · 响堂</div>
+  <div class="tab" data-day="day3">叁 · 殷墟</div>
+  <div class="tab" data-day="day4">肆 · 登封</div>
+  <div class="tab" data-day="day5">伍 · 巩义</div>
+  <div class="tab" data-day="day6">陆 · 归程</div>
+  <div class="tab" data-day="budget">费用</div>
+</div></div>
+
+<div class="container">
+
+<!-- ====== 总览 ====== -->
+<div class="day-section active" id="overview">
+  <div class="day-header"><div class="day-accent" style="background:var(--ink)"></div><div class="day-header-text"><h2>行程总览</h2><div class="date">二〇二六年四月廿八 — 五月初三</div></div></div>
+  <div class="card"><h4>概要</h4>
+    <table class="bt"><tr><th>日</th><th>行程</th><th>宿</th></tr>
+    <tr><td>壹</td><td>邯郸东汇合 → 博物馆 → 串城街</td><td>邯郸</td></tr>
+    <tr><td>贰</td><td>响堂山石窟 → 北朝/邺城博物馆</td><td>安阳</td></tr>
+    <tr><td>叁</td><td>殷墟 → 文峰塔 → 修定寺塔 → 登封</td><td>登封</td></tr>
+    <tr><td>肆 🎂</td><td>汉三阙 → 少林寺 → 嵩岳寺塔 → 巩义</td><td>巩义</td></tr>
+    <tr><td>伍</td><td>石窟寺 → 永昭陵 → 永熙陵</td><td>巩义</td></tr>
+    <tr><td>陆</td><td>还车 → 高铁回咸阳</td><td>归</td></tr></table>
+  </div>
+  <div class="card"><h4>路线</h4><div class="route-map"><img src="photos/route_map.png" onclick="openLightbox(this)"></div></div>
+  <div class="card"><h4>车次</h4><p><b>去</b> 你 G1405 北京西 12:40→邯郸东 15:05 ／ 父母 咸阳西 11:15→西安北 换乘 G354→邯郸东 14:52</p><p><b>回</b> G1803 巩义南 12:02→西安北 13:51 → ~14:30咸阳</p></div>
+  <div class="card"><h4>门票优惠</h4><p>父亲70+大部分<b>免票</b> · 母亲60-69多数<b>半价</b> · 带好身份证 · 殷墟免票仍需预约</p></div>
+</div>
+
+<!-- ====== D1 ====== -->
+<div class="day-section" id="day1">
+  <div class="day-header"><div class="day-accent" style="background:var(--d1)"></div><div class="day-header-text"><h2>壹 · 邯郸</h2><div class="date">四月廿八 · 周二</div><div class="route">邯郸东站 → 博物馆 → 串城街</div></div></div>
+  <div class="summary bg-d1"><div class="summary-bar" style="background:linear-gradient(90deg,var(--d1),transparent)"></div><div class="summary-body"><div class="st">今日</div><p>赵国故都、成语之乡。博物馆新馆磁州窑精品和赵国文物值得细看，五一延时至21:00。串城街浓缩三千年历史，边逛边吃。</p></div></div>
+  <div class="xhs"><div class="xt">小红书 · 邯郸美食</div><div class="xc"><b>@凌晨四点半</b>（818赞）鸡蛋布袋+豆沫汤 · 东环南沿村拉面 · 砂锅米线 ／ <b>@格子去哪儿</b>（296赞）郭八火烧 · 驴肉火烧 · 牛奶棒</div></div>
+  <div class="tl-wrap"><div class="tl-wrap-title">行程安排</div>
+  <div class="timeline">
+    <div class="tl-item drive"><div class="tl-time">14:52 / 15:05</div><div class="tl-title">邯郸东站汇合</div><div class="tl-desc">父母14:52到，你15:05到。取车</div><span class="tl-tag tag-drive">取车</span></div>
+    <div class="tl-item highlight"><div class="tl-time">16:00 — 18:30</div><div class="tl-title">邯郸博物馆</div><div class="tl-desc">磁州窑 · 赵文化 · 响堂山石窟艺术厅。需预约</div><span class="tl-tag tag-museum">免费</span>
+      <div class="tl-photo"><img src="photos/handan_museum.jpg" onclick="openLightbox(this)"><div class="pc">邯郸博物馆新馆</div></div></div>
+    <div class="tl-item food"><div class="tl-time">18:30 — 20:30</div><div class="tl-title">串城街</div><div class="tl-desc">郭八火烧 · 一篓油水饺 · 驴肉火烧 · 豆沫</div><span class="tl-tag tag-food">晚餐</span></div>
+    <div class="tl-item"><div class="tl-time">21:00</div><div class="tl-title">入住</div></div>
+  </div></div>
+</div>
+
+<!-- ====== D2 ====== -->
+<div class="day-section" id="day2">
+  <div class="day-header"><div class="day-accent" style="background:var(--d2)"></div><div class="day-header-text"><h2>贰 · 响堂山 → 安阳</h2><div class="date">四月廿九 · 周三</div><div class="route">北响堂 → 南响堂 → 北朝/邺城博物馆 → 安阳</div></div></div>
+  <div class="summary bg-d2"><div class="summary-bar" style="background:linear-gradient(90deg,var(--d2),transparent)"></div><div class="summary-body"><div class="st">今日</div><p>北齐皇家石窟的盛宴。北响堂大佛洞、刻经洞是精华，常乐寺残存石塔气势恢宏。下午两座北朝博物馆还原那个短暂辉煌的时代。晚上仓巷街吃安阳扁粉菜。</p></div></div>
+  <div class="xhs"><div class="xt">小红书推荐</div><div class="xc"><b>@耒耒</b>（129赞）先北后南，大佛洞坐像3.5米 · 南响堂第7窟莲花飞天经典 ／ <b>安阳</b>：韩记扁粉菜TOP1</div></div>
+  <div class="tl-wrap"><div class="tl-wrap-title">行程安排</div>
+  <div class="timeline">
+    <div class="tl-item drive"><div class="tl-time">08:00 — 09:10</div><div class="tl-title">邯郸 → 北响堂</div><span class="tl-tag tag-drive">58km</span></div>
+    <div class="tl-item"><div class="tl-time">09:10 — 09:50</div><div class="tl-title">常乐寺遗址</div><div class="tl-desc">北齐皇家寺院，石塔基座</div><span class="tl-tag tag-free">免费</span>
+      <div class="tl-photos"><div class="tl-photo"><img src="photos/changlesi.jpg" onclick="openLightbox(this)"><div class="pc">石塔基座</div></div><div class="tl-photo"><img src="photos/xhs_changlesi.jpg" onclick="openLightbox(this)"><div class="pc">远望常乐寺</div></div></div></div>
+    <div class="tl-item highlight"><div class="tl-time">09:50 — 11:30</div><div class="tl-title">北响堂石窟</div><div class="tl-desc">大佛洞 · 刻经洞 · 爬约20分钟</div><span class="tl-tag tag-heritage">¥80 母半价/父免</span>
+      <div class="tl-photos"><div class="tl-photo"><img src="photos/north_xiangtangshan.jpg" onclick="openLightbox(this)"><div class="pc">北响堂</div></div><div class="tl-photo"><img src="photos/xhs_north_xiangtangshan.jpg" onclick="openLightbox(this)"><div class="pc">大佛洞</div></div></div></div>
+    <div class="tl-item"><div class="tl-time">12:00 — 12:30</div><div class="tl-title">南响堂石窟</div><span class="tl-tag tag-heritage">联票</span>
+      <div class="tl-photo"><img src="photos/south_xiangtangshan.jpg" onclick="openLightbox(this)"><div class="pc">南响堂</div></div></div>
+    <div class="tl-item food"><div class="tl-time">12:30 — 13:30</div><div class="tl-title">午餐</div><span class="tl-tag tag-food">峰峰</span></div>
+    <div class="tl-item"><div class="tl-time">13:50 — 15:00</div><div class="tl-title">北朝考古博物馆</div><div class="tl-desc">壁画、陶俑。确认是否午休</div><span class="tl-tag tag-museum">免费</span></div>
+    <div class="tl-item"><div class="tl-time">15:40 — 17:00</div><div class="tl-title">邺城考古博物馆</div><div class="tl-desc">佛首、菩萨立像</div><span class="tl-tag tag-museum">免费</span></div>
+    <div class="tl-item drive"><div class="tl-time">17:00 — 18:30</div><div class="tl-title">→ 安阳</div><span class="tl-tag tag-drive">60km</span></div>
+    <div class="tl-item food"><div class="tl-time">19:00</div><div class="tl-title">仓巷街</div><div class="tl-desc">扁粉菜 · 烩面 · 粉浆饭</div><span class="tl-tag tag-food">晚餐</span></div>
+    <div class="tl-item"><div class="tl-time">21:00</div><div class="tl-title">入住</div></div>
+  </div></div>
+</div>
+
+<!-- ====== D3 ====== -->
+<div class="day-section" id="day3">
+  <div class="day-header"><div class="day-accent" style="background:var(--d3)"></div><div class="day-header-text"><h2>叁 · 殷墟 → 修定寺塔 → 登封</h2><div class="date">四月三十 · 周四</div><div class="route">殷墟 → 文峰塔 → 修定寺塔 → 直驱登封</div></div></div>
+  <div class="summary bg-d3"><div class="summary-bar" style="background:linear-gradient(90deg,var(--d3),transparent)"></div><div class="summary-body"><div class="st">今日</div><p>殷墟新馆妇好墓、甲骨文震撼。文峰塔"上大下小"全国罕见。修定寺塔3000块花砖精美绝伦。看完直奔登封。</p></div></div>
+  <div class="xhs"><div class="xt">小红书推荐</div><div class="xc"><b>@殷墟课代表</b>（144赞）提前7天预约！8:30第一批 · 5大镇馆之宝 · 二楼车马坑最震撼 ／ 早餐：韩记扁粉菜</div></div>
+  <div class="tl-wrap"><div class="tl-wrap-title">行程安排</div>
+  <div class="timeline">
+    <div class="tl-item food"><div class="tl-time">07:30</div><div class="tl-title">扁粉菜 + 烧饼</div><span class="tl-tag tag-food">安阳早餐</span></div>
+    <div class="tl-item highlight"><div class="tl-time">08:45 — 11:30</div><div class="tl-title">殷墟博物馆</div><div class="tl-desc">妇好墓 · 甲骨文厅 · 车马坑。必须预约</div><span class="tl-tag tag-heritage">¥80 父母免票</span>
+      <div class="tl-photos"><div class="tl-photo"><img src="photos/yinxu_museum.jpg" onclick="openLightbox(this)"><div class="pc">殷墟博物馆</div></div><div class="tl-photo"><img src="photos/xhs_yinxu_museum.jpg" onclick="openLightbox(this)"><div class="pc">馆藏</div></div></div></div>
+    <div class="tl-item"><div class="tl-time">12:00 — 12:40</div><div class="tl-title">文峰塔</div><div class="tl-desc">"上大下小"倒锥形，五代建造</div><span class="tl-tag tag-heritage">~¥25 父免</span>
+      <div class="tl-photo"><img src="photos/xhs_wenfeng_pagoda.jpg" onclick="openLightbox(this)"><div class="pc">天宁寺文峰塔</div></div></div>
+    <div class="tl-item food"><div class="tl-time">12:40</div><div class="tl-title">午餐</div><span class="tl-tag tag-food">安阳烩面</span></div>
+    <div class="tl-item drive"><div class="tl-time">13:30 — 14:30</div><div class="tl-title">→ 修定寺塔</div><span class="tl-tag tag-drive">山路40km</span></div>
+    <div class="tl-item highlight"><div class="tl-time">14:30 — 15:30</div><div class="tl-title">修定寺塔</div><div class="tl-desc">全国唯一通体花砖古塔。提前联系文管员</div><span class="tl-tag tag-heritage">免费</span>
+      <div class="tl-photos"><div class="tl-photo"><img src="photos/xiuding_pagoda.jpg" onclick="openLightbox(this)"><div class="pc">修定寺塔</div></div><div class="tl-photo"><img src="photos/xhs_xiuding_pagoda.jpg" onclick="openLightbox(this)"><div class="pc">花砖细节</div></div></div></div>
+    <div class="tl-item drive"><div class="tl-time">15:30 — 19:00</div><div class="tl-title">直驱登封</div><div class="tl-desc">不回安阳，出山上高速</div><span class="tl-tag tag-drive">230km</span></div>
+    <div class="tl-item food"><div class="tl-time">19:30</div><div class="tl-title">登封晚餐</div><div class="tl-desc">芝麻焦盖烧饼 · 卤面 · 糊涂面</div><span class="tl-tag tag-food">登封</span></div>
+    <div class="tl-item"><div class="tl-time">21:00</div><div class="tl-title">入住</div></div>
+  </div></div>
+  <div class="warn"><h4>提醒</h4><ul><li>殷墟<b>提前7天预约</b></li><li>修定寺塔深山，出山30-40分钟</li></ul></div>
+</div>
+
+<!-- ====== D4 ====== -->
+<div class="day-section" id="day4">
+  <div class="day-header"><div class="day-accent" style="background:var(--d4)"></div><div class="day-header-text"><h2>肆 · 登封 → 巩义 🎂</h2><div class="date">五月初一 · 父亲生日</div><div class="route">汉三阙 → 少林寺 → 嵩岳寺塔 → 法王寺 → 巩义</div></div></div>
+  <div class="summary bg-d4"><div class="summary-bar" style="background:linear-gradient(90deg,var(--d4),transparent)"></div><div class="summary-body"><div class="st">今日</div><p>"天地之中"世界遗产日。汉三阙是中国最古老地面建筑遗存，初祖庵是北宋木构隐藏彩蛋，嵩岳寺塔是最古老砖塔。傍晚到巩义庆生。</p></div></div>
+  <div class="xhs"><div class="xt">小红书推荐</div><div class="xc"><b>@追风的溪月</b>（63赞）少林寺10点前到，先塔林 · 初祖庵后山1km ／ <b>登封</b>：焦盖烧饼 · 卤面 · 素饼 · 糊涂面</div></div>
+  <div class="tl-wrap"><div class="tl-wrap-title">行程安排</div>
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-time">07:30</div><div class="tl-title">退房</div></div>
+    <div class="tl-item food"><div class="tl-time">07:30</div><div class="tl-title">焦盖烧饼 + 糊涂面</div><span class="tl-tag tag-food">登封早餐</span></div>
+    <div class="tl-item highlight"><div class="tl-time">08:15 — 09:45</div><div class="tl-title">汉三阙</div><div class="tl-desc">太室阙 · 启母阙 · 少室阙。东汉浮雕蹴鞠、狩猎</div><span class="tl-tag tag-heritage">世界遗产 · 免费</span>
+      <div class="tl-photos"><div class="tl-photo"><img src="photos/taishi_que.jpg" onclick="openLightbox(this)"><div class="pc">太室阙</div></div><div class="tl-photo"><img src="photos/xhs_taishi_que.jpg" onclick="openLightbox(this)"><div class="pc">阙身浮雕</div></div></div>
+      <div class="tl-photos" style="margin-top:6px"><div class="tl-photo"><img src="photos/qimu_que.jpg" onclick="openLightbox(this)"><div class="pc">启母阙</div></div><div class="tl-photo"><img src="photos/shaoshi_que.jpg" onclick="openLightbox(this)"><div class="pc">少室阙</div></div></div></div>
+    <div class="tl-item highlight"><div class="tl-time">10:00 — 12:00</div><div class="tl-title">少林寺 · 塔林 · 初祖庵</div><div class="tl-desc">先塔林（248座），再常住院。初祖庵后山1km，北宋木构。五一早到</div><span class="tl-tag tag-heritage">世界遗产 · ¥80 母半价/父免</span>
+      <div class="tl-photos"><div class="tl-photo"><img src="photos/shaolin_talin.jpg" onclick="openLightbox(this)"><div class="pc">塔林</div></div><div class="tl-photo"><img src="photos/xhs_shaolin_talin.jpg" onclick="openLightbox(this)"><div class="pc">248座古塔</div></div></div>
+      <div class="tl-photo" style="margin-top:6px"><img src="photos/xhs_chuzu_temple.jpg" onclick="openLightbox(this)"><div class="pc">初祖庵大殿 · 北宋木构 · 营造法式</div></div></div>
+    <div class="tl-item food"><div class="tl-time">12:00</div><div class="tl-title">景区午餐</div><span class="tl-tag tag-food">简餐</span></div>
+    <div class="tl-item drive"><div class="tl-time">12:30</div><div class="tl-title">→ 嵩阳景区</div><span class="tl-tag tag-drive">15km</span></div>
+    <div class="tl-item highlight"><div class="tl-time">13:00 — 13:45</div><div class="tl-title">嵩岳寺塔</div><div class="tl-desc">中国最古老砖塔（515年），十二边形，唯一</div><span class="tl-tag tag-heritage">世界遗产 · ¥80</span>
+      <div class="tl-photos"><div class="tl-photo"><img src="photos/songyue_pagoda.jpg" onclick="openLightbox(this)"><div class="pc">嵩岳寺塔</div></div><div class="tl-photo"><img src="photos/xhs_songyue_pagoda.jpg" onclick="openLightbox(this)"><div class="pc">十二边形密檐</div></div></div></div>
+    <div class="tl-item"><div class="tl-time">13:45 — 14:30</div><div class="tl-title">法王寺塔</div><span class="tl-tag tag-heritage">联票</span>
+      <div class="tl-photo"><img src="photos/fawang_pagoda.jpg" onclick="openLightbox(this)"><div class="pc">法王寺塔</div></div></div>
+    <div class="tl-item drive"><div class="tl-time">14:30 — 15:30</div><div class="tl-title">→ 巩义</div><span class="tl-tag tag-drive">55km</span></div>
+    <div class="tl-item"><div class="tl-time">15:30</div><div class="tl-title">入住（连住两晚）</div></div>
+    <div class="tl-item food"><div class="tl-time">18:00 — 20:00</div><div class="tl-title">🎂 父亲生日晚宴</div><div class="tl-desc">提前订蛋糕送餐厅</div><span class="tl-tag tag-food">生日宴</span></div>
+  </div></div>
+</div>
+
+<!-- ====== D5 ====== -->
+<div class="day-section" id="day5">
+  <div class="day-header"><div class="day-accent" style="background:var(--d5)"></div><div class="day-header-text"><h2>伍 · 巩义</h2><div class="date">五月初二 · 周六</div><div class="route">石窟寺 → 永昭陵 → 博物馆 → 永熙陵</div></div></div>
+  <div class="summary bg-d5"><div class="summary-bar" style="background:linear-gradient(90deg,var(--d5),transparent)"></div><div class="summary-body"><div class="st">今日</div><p>北宋皇陵探秘日。巩义石窟寺保存国内唯一帝后礼佛图原作。永昭陵了解宋陵格局。重头戏永熙陵——麦田中千年石像生，旷野震撼。</p></div></div>
+  <div class="xhs"><div class="xt">小红书推荐</div><div class="xc"><b>@石涧敲冰</b>（321赞）永熙陵石像生下村民聊天 · 元德李后陵全在麦田+远山 ／ <b>@追风的溪月</b>（441赞）河南行最值：巩义石窟寺 ／ <b>美食</b>：烩面 · 大盘鸡 · 肉合</div></div>
+  <div class="tl-wrap"><div class="tl-wrap-title">行程安排</div>
+  <div class="timeline">
+    <div class="tl-item food"><div class="tl-time">08:00</div><div class="tl-title">巩义烩面</div><span class="tl-tag tag-food">早餐</span></div>
+    <div class="tl-item drive"><div class="tl-time">08:30</div><div class="tl-title">→ 石窟寺</div><span class="tl-tag tag-drive">10km</span></div>
+    <div class="tl-item highlight"><div class="tl-time">09:00 — 10:30</div><div class="tl-title">巩义石窟寺</div><div class="tl-desc">第1窟、第4窟帝后礼佛图——国内仅存北魏原作</div><span class="tl-tag tag-heritage">¥28 母优惠/父免</span>
+      <div class="tl-photos"><div class="tl-photo"><img src="photos/gongxian_cave1.jpg" onclick="openLightbox(this)"><div class="pc">石窟寺</div></div><div class="tl-photo"><img src="photos/xhs_gongxian_cave.jpg" onclick="openLightbox(this)"><div class="pc">帝后礼佛图</div></div></div></div>
+    <div class="tl-item highlight"><div class="tl-time">10:45 — 12:15</div><div class="tl-title">永昭陵</div><div class="tl-desc">宋仁宗陵，唯一复建地面建筑的宋陵</div><span class="tl-tag tag-free">免费</span>
+      <div class="tl-photo"><img src="photos/songlings_field2.jpg" onclick="openLightbox(this)"><div class="pc">石像生守望千年 · 麦田深处的大宋遗迹</div></div></div>
+    <div class="tl-item food"><div class="tl-time">12:15</div><div class="tl-title">午餐</div><span class="tl-tag tag-food">烩面/大盘鸡</span></div>
+    <div class="tl-item"><div class="tl-time">13:30 — 14:30</div><div class="tl-title">巩义博物馆</div><div class="tl-desc">宋陵文物 · 唐三彩展（二楼！）</div><span class="tl-tag tag-museum">免费</span></div>
+    <div class="tl-item drive"><div class="tl-time">14:30</div><div class="tl-title">→ 西村镇</div><span class="tl-tag tag-drive">15km</span></div>
+    <div class="tl-item highlight"><div class="tl-time">15:00 — 16:30</div><div class="tl-title">永熙陵 · 麦田石像生 🌾</div><div class="tl-desc">宋太宗陵。石像生散入麦田。元德李后陵——麦田+远山，最美机位</div><span class="tl-tag tag-heritage">免费 · 田野开放</span>
+      <div class="tl-photos"><div class="tl-photo"><img src="photos/songlings_field1.jpg" onclick="openLightbox(this)"><div class="pc">一眼千年</div></div><div class="tl-photo"><img src="photos/songlings_harvest1.jpg" onclick="openLightbox(this)"><div class="pc">麦浪中的千年石狮</div></div></div>
+      <div class="tl-photo" style="margin-top:6px"><img src="photos/songlings_field3.jpg" onclick="openLightbox(this)"><div class="pc">田野深处 · 远山如黛</div></div></div>
+    <div class="tl-item"><div class="tl-time">17:00</div><div class="tl-title">返回</div></div>
+    <div class="tl-item food"><div class="tl-time">18:30</div><div class="tl-title">晚餐</div><div class="tl-desc">徐大勺拌粉 · 园丁街歇歇</div><span class="tl-tag tag-food">觅食</span></div>
+  </div></div>
+</div>
+
+<!-- ====== D6 ====== -->
+<div class="day-section" id="day6">
+  <div class="day-header"><div class="day-accent" style="background:var(--d6)"></div><div class="day-header-text"><h2>陆 · 归程</h2><div class="date">五月初三 · 周日</div></div></div>
+  <div class="summary bg-d6"><div class="summary-bar" style="background:linear-gradient(90deg,var(--d6),transparent)"></div><div class="summary-body"><div class="st">今日</div><p>自然醒。还车，高铁，下午到家。</p></div></div>
+  <div class="tl-wrap"><div class="tl-wrap-title">行程安排</div>
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-time">上午</div><div class="tl-title">自然醒，退房</div></div>
+    <div class="tl-item food"><div class="tl-time">09:00</div><div class="tl-title">告别餐</div><span class="tl-tag tag-food">巩义烩面</span></div>
+    <div class="tl-item drive"><div class="tl-time">11:00</div><div class="tl-title">巩义南站还车</div><span class="tl-tag tag-drive">还车</span></div>
+    <div class="tl-item highlight"><div class="tl-time">12:02 — 13:51</div><div class="tl-title">G1803 → 西安北</div><span class="tl-tag tag-heritage">高铁</span></div>
+    <div class="tl-item"><div class="tl-time">~14:30</div><div class="tl-title">到家</div><div class="tl-desc">5/4 咸阳飞北京</div></div>
+  </div></div>
+  <div class="warn"><h4>抢票</h4><p>5/3返程高峰，<b>提前抢票</b>。备选 G2027 14:20 / G3285 17:54</p></div>
+</div>
+
+<!-- ====== 费用 ====== -->
+<div class="day-section" id="budget">
+  <div class="day-header"><div class="day-accent" style="background:var(--ink3)"></div><div class="day-header-text"><h2>费用</h2><div class="date">三人 · 六天五晚</div></div></div>
+  <div class="card"><h4>大交通 ¥1,539</h4><table class="bt"><tr><td>你 北京西→邯郸东</td><td>¥209</td></tr><tr><td>父母 咸阳西→西安北→邯郸东</td><td>¥736</td></tr><tr><td>三人 巩义南→西安北</td><td>¥594</td></tr></table></div>
+  <div class="card"><h4>租车 ¥2,590</h4><table class="bt"><tr><td>BMW 3系 五天</td><td>~¥2,000</td></tr><tr><td>油费+过路费</td><td>~¥590</td></tr></table></div>
+  <div class="card"><h4>门票 ¥541</h4><table class="bt"><tr><th>景点</th><th>你</th><th>母</th><th>父</th><th>计</th></tr><tr><td>响堂山</td><td>¥80</td><td>¥15</td><td class="free">免</td><td>¥95</td></tr><tr><td>观光车</td><td>¥15</td><td>¥15</td><td>¥15</td><td>¥45</td></tr><tr><td>殷墟</td><td>¥80</td><td class="free">免</td><td class="free">免</td><td>¥80</td></tr><tr><td>文峰塔</td><td>¥25</td><td>~¥13</td><td class="free">免</td><td>~¥38</td></tr><tr><td>少林寺</td><td>¥80</td><td>¥40</td><td class="free">免</td><td>¥120</td></tr><tr><td>嵩阳</td><td>¥80</td><td>¥40</td><td class="free">免</td><td>¥120</td></tr><tr><td>石窟寺</td><td>¥28</td><td>¥15</td><td class="free">免</td><td>¥43</td></tr></table></div>
+  <div class="card"><h4>住宿 ¥3,142</h4><table class="bt"><tr><td>邯郸 亚朵 ×2间</td><td>¥718</td></tr><tr><td>安阳 亚朵 ×2间</td><td>¥682</td></tr><tr><td>登封 星程 三人间</td><td>¥342</td></tr><tr><td>巩义 全季 ×2间 ×2晚</td><td>¥1,400</td></tr></table></div>
+  <div class="card"><h4>餐饮 ~¥2,900</h4><p>日均约¥450 · 蛋糕~¥200</p></div>
+  <div class="card" style="background:linear-gradient(135deg,var(--warm),var(--card))"><h4 style="color:var(--rust)">合计 ¥10,712 · 人均 ¥3,571</h4><p style="color:var(--ink3);font-size:.76em">控制餐饮可至 ~¥9,800</p></div>
+</div>
+
+</div>
+
+<nav class="bottom-nav"><div class="bnav">
+  <a class="bi active" data-day="overview"><span class="n">览</span><span class="lbl">总览</span></a>
+  <a class="bi" data-day="day1"><span class="n">壹</span><span class="lbl">邯郸</span></a>
+  <a class="bi" data-day="day2"><span class="n">贰</span><span class="lbl">响堂</span></a>
+  <a class="bi" data-day="day3"><span class="n">叁</span><span class="lbl">殷墟</span></a>
+  <a class="bi" data-day="day4"><span class="n">肆</span><span class="lbl">登封</span></a>
+  <a class="bi" data-day="day5"><span class="n">伍</span><span class="lbl">巩义</span></a>
+  <a class="bi" data-day="day6"><span class="n">陆</span><span class="lbl">归程</span></a>
+  <a class="bi" data-day="budget"><span class="n">费</span><span class="lbl">费用</span></a>
+</div></nav>
+
+<div class="lightbox" id="lightbox" onclick="this.classList.remove('active')"><img id="lightbox-img" src="" alt=""></div>
+
+<script>
+function switchDay(d){
+  document.querySelectorAll('.day-section').forEach(function(s){s.classList.remove('active')});
+  document.querySelectorAll('.tab,.bi').forEach(function(t){t.classList.remove('active')});
+  var s=document.getElementById(d);if(s)s.classList.add('active');
+  document.querySelectorAll('[data-day="'+d+'"]').forEach(function(e){e.classList.add('active')});
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('.tab,.bi').forEach(function(e){
+  e.addEventListener('click',function(ev){
+    ev.preventDefault();
+    var t=ev.currentTarget;
+    var d=t.getAttribute('data-day');
+    if(d) switchDay(d);
+  });
+});
+function openLightbox(img){
+  document.getElementById('lightbox-img').src=img.src;
+  document.getElementById('lightbox').classList.add('active');
+}
+</script>
+</body>
+</html>

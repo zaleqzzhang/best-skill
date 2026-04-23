@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我的旅行书架 · 行迹 TravelCraft</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #F5EFE6;
+    --paper: #FFFFFF;
+    --brown: #B07B5F;
+    --brown-dark: #9A6A50;
+    --indigo: #2C4A6E;
+    --green: #5B7A5A;
+    --dark: #333;
+    --gray: #999;
+    --border: #E8DCC9;
+  }
+  body {
+    font-family: "Songti SC", "STSong", "SimSun", serif;
+    background: var(--bg);
+    color: var(--dark);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    padding: 60px 20px 40px;
+    position: relative;
+  }
+  .brand {
+    font-size: 56px; font-weight: bold; color: var(--brown);
+    letter-spacing: 20px; margin-bottom: 8px;
+  }
+  .brand-en {
+    font-family: "Times New Roman", serif;
+    font-style: italic; font-size: 20px;
+    color: var(--indigo); letter-spacing: 4px;
+    margin-bottom: 24px;
+  }
+  .tagline {
+    font-size: 14px; color: var(--gray);
+    letter-spacing: 3px;
+  }
+
+  /* 云雷纹分隔条 */
+  .ornament {
+    display: flex; justify-content: center; align-items: center;
+    gap: 8px; margin: 32px auto; max-width: 600px;
+  }
+  .ornament .line { flex: 1; height: 1px; background: var(--brown); }
+  .ornament .dot {
+    width: 8px; height: 8px; background: var(--brown);
+    transform: rotate(45deg);
+  }
+  .ornament .dot-hollow {
+    width: 8px; height: 8px; border: 1px solid var(--brown);
+    transform: rotate(45deg);
+  }
+
+  /* Stats */
+  .stats {
+    text-align: center; padding: 0 20px 40px;
+    font-size: 15px; color: var(--gray);
+  }
+  .stats strong { color: var(--brown); font-size: 18px; margin: 0 4px; }
+
+  /* Year section */
+  .year-section {
+    max-width: 1200px; margin: 0 auto; padding: 0 24px 40px;
+  }
+  .year-title {
+    font-size: 28px; color: var(--indigo); font-weight: bold;
+    letter-spacing: 4px; margin-bottom: 4px;
+    padding-bottom: 12px; border-bottom: 2px solid var(--brown);
+    position: relative;
+  }
+  .year-title::after {
+    content: ""; position: absolute; bottom: -2px; left: 0;
+    width: 40px; height: 2px; background: var(--indigo);
+  }
+  .year-count {
+    font-size: 13px; color: var(--gray); margin-bottom: 24px;
+  }
+
+  /* Trip grid */
+  .trip-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+  }
+  .trip-card {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex; flex-direction: column;
+    position: relative;
+  }
+  .trip-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(176, 123, 95, 0.15);
+  }
+  .trip-cover {
+    aspect-ratio: 4/3; background: #F0E8DB;
+    background-size: cover; background-position: center;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+  }
+  .trip-cover::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.15) 100%);
+  }
+  .lock-badge {
+    position: absolute; top: 12px; right: 12px;
+    background: rgba(255,255,255,0.95);
+    color: var(--brown); padding: 4px 10px;
+    font-size: 13px; border: 1px solid var(--brown);
+    z-index: 2;
+  }
+  .theme-badge {
+    position: absolute; top: 12px; left: 12px;
+    background: var(--brown); color: #FFF;
+    padding: 4px 12px; font-size: 12px;
+    letter-spacing: 2px; z-index: 2;
+  }
+  .trip-body {
+    padding: 20px; flex: 1;
+    display: flex; flex-direction: column;
+  }
+  .trip-title {
+    font-size: 22px; font-weight: bold; color: var(--dark);
+    margin-bottom: 8px; letter-spacing: 1px;
+  }
+  .trip-meta {
+    font-size: 13px; color: var(--gray);
+    margin-bottom: 4px; font-family: "Times New Roman", "Songti SC", serif;
+  }
+  .trip-spec {
+    display: flex; gap: 16px; margin-top: 12px;
+    font-size: 13px; color: var(--indigo);
+  }
+  .trip-spec span { display: flex; align-items: center; gap: 4px; }
+
+  .trip-actions {
+    margin-top: 16px; padding-top: 16px;
+    border-top: 1px dashed var(--border);
+    display: flex; gap: 8px;
+  }
+  .btn {
+    flex: 1; padding: 10px 12px;
+    text-align: center; text-decoration: none;
+    font-size: 13px; letter-spacing: 2px;
+    border: 1px solid var(--brown);
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .btn-primary { background: var(--brown); color: #FFF; }
+  .btn-primary:hover { background: var(--brown-dark); }
+  .btn-secondary {
+    background: transparent; color: var(--brown);
+  }
+  .btn-secondary:hover {
+    background: var(--brown); color: #FFF;
+  }
+
+  /* Empty state */
+  .empty {
+    text-align: center; padding: 80px 20px;
+    max-width: 500px; margin: 0 auto;
+    color: var(--gray);
+  }
+  .empty-title {
+    font-size: 22px; color: var(--brown); margin-bottom: 12px;
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center; padding: 40px 20px 60px;
+    font-size: 12px; color: var(--gray);
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+  }
+  .footer-brand {
+    color: var(--brown); font-weight: bold; margin-bottom: 8px;
+  }
+
+  @media (max-width: 640px) {
+    .brand { font-size: 40px; letter-spacing: 12px; }
+    .brand-en { font-size: 16px; }
+    .trip-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="brand">行 迹</div>
+  <div class="brand-en">TravelCraft · My Bookshelf</div>
+  <div class="tagline">我 的 旅 行 书 架</div>
+</header>
+
+<div class="ornament">
+  <div class="line"></div>
+  <div class="dot-hollow"></div>
+  <div class="dot"></div>
+  <div class="dot-hollow"></div>
+  <div class="line"></div>
+</div>
+
+<div class="stats">
+  共收录 <strong>{{ total }}</strong> 份行程
+  {% if latest_date %} · 最近更新：<strong>{{ latest_date }}</strong>{% endif %}
+</div>
+
+{% if total == 0 %}
+  <div class="empty">
+    <div class="empty-title">书架暂时空空如也</div>
+    <p>去 CodeBuddy 对话中说一句「帮我规划旅行」，<br>
+       部署后的行程会自动出现在这里。</p>
+  </div>
+{% else %}
+  {% for year, trips in grouped.items() %}
+  <section class="year-section">
+    <h2 class="year-title">{{ year }}</h2>
+    <div class="year-count">{{ trips|length }} 份行程</div>
+    <div class="trip-grid">
+      {% for trip in trips %}
+      <article class="trip-card">
+        <div class="trip-cover"
+             {% if trip.cover_image %}style="background-image:url('{{ trip.cover_image }}')"{% endif %}>
+          {% if trip.theme %}<div class="theme-badge">{{ trip.theme }}</div>{% endif %}
+          {% if trip.has_password %}<div class="lock-badge">🔒 加密</div>{% endif %}
+        </div>
+        <div class="trip-body">
+          <div class="trip-title">{{ trip.title }}</div>
+          {% if trip.date_range %}<div class="trip-meta">📅 {{ trip.date_range }}</div>{% endif %}
+          <div class="trip-spec">
+            {% if trip.days %}<span>🗓 {{ trip.days }} 天</span>{% endif %}
+            {% if trip.people %}<span>👥 {{ trip.people }} 人</span>{% endif %}
+          </div>
+          <div class="trip-actions">
+            {% if trip.urls.github %}
+              <a class="btn btn-primary" href="{{ trip.urls.github }}" target="_blank">🚀 打开</a>
+            {% elif trip.urls.eop %}
+              <a class="btn btn-primary" href="{{ trip.urls.eop }}" target="_blank">🇨🇳 国内版</a>
+            {% endif %}
+            {% if trip.urls.vercel %}
+              <a class="btn btn-secondary" href="{{ trip.urls.vercel }}" target="_blank">🌏 备用</a>
+            {% endif %}
+          </div>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+  {% endfor %}
+{% endif %}
+
+<div class="ornament">
+  <div class="line"></div>
+  <div class="dot-hollow"></div>
+  <div class="dot"></div>
+  <div class="dot-hollow"></div>
+  <div class="line"></div>
+</div>
+
+<footer class="footer">
+  <div class="footer-brand">行迹 · TravelCraft</div>
+  <div>让每一次出行，都有一份配得上回忆的行程</div>
+  <div style="margin-top:8px;font-family:'Times New Roman',serif;">
+    v2.0.0 · Generated {{ generated_at }}
+  </div>
+</footer>
+
+</body>
+</html>
