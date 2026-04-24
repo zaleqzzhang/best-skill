@@ -4,13 +4,35 @@
 
 **本阶段可在任意目录执行**，无需提前创建 worktree。
 
-**⚠️ 第一步（强制）：必须使用 Skill 工具调用 `superpowers:brainstorming` 技能**。禁止在未调用该技能的情况下直接输出设计方案或开始提问。
+**⚠️ 第一步（强制）：必须使用 Skill 工具调用 brainstorming 技能**。禁止在未调用该技能的情况下直接输出设计方案或开始提问。
+
+**技能调用优化策略（按顺序尝试）**：
+1. **优先调用 `superpowers:brainstorming`**（带前缀）
+2. **若失败，改用 `brainstorming`**（无前缀，部分环境可能索引异常）
+3. **若仍失败，输出增强诊断提示并停止**
 
 **brainstorming 技能调用失败处理**：
-- 若 Skill 工具返回错误（技能未安装/不可用）→ 输出：
-  "superpowers:brainstorming 技能不可用。请检查 superpowers 插件是否已安装。
-   或者，您可以手动进行设计讨论后执行 /opsx:propose --skip-brainstorming。"
-- 禁止在技能不可用时跳过设计讨论直接生成文档
+- 若 Skill 工具返回错误（技能未安装/不可用）→ 按上述顺序尝试备选
+- 若所有尝试均失败 → 输出以下增强诊断提示并停止：
+
+```
+❌ 未能找到 brainstorming 技能。
+
+可能原因及排查方向：
+1. superpowers 插件未启用 → 检查插件管理界面，确保 superpowers 已启用
+2. 技能索引异常 → 尝试刷新技能索引或重启 IDE
+3. 技能名称拼写问题 → 已尝试 superpowers:brainstorming 和 brainstorming 两种形式
+
+备选方案：
+您可以手动进行设计讨论（参考 OpenSpec 提案格式），然后执行：
+  /opsx:propose --skip-brainstorming
+
+注意事项：
+- --skip-brainstorming 会跳过自动设计讨论，但仍需您提供设计方案摘要
+- 禁止在未完成设计讨论的情况下直接生成 OpenSpec 文档
+```
+
+- **禁止在技能不可用时跳过设计讨论直接生成文档**
 
 调用 `superpowers:brainstorming` 技能后，按照该技能的指引完成完整的设计讨论过程。
 
@@ -90,6 +112,12 @@ git rev-parse --git-dir
 | `1` 或 `创建 worktree` | 调用 `superpowers:using-git-worktrees` 技能创建功能分支 worktree，worktree 就绪后进入 Phase 2 |
 | `2` 或 `继续` | 在当前主仓库目录继续，进入 Phase 2（不推荐，用户自行负责分支管理） |
 | `3` 或 `取消` | 终止流程，不生成任何文件 |
+
+### 技术说明
+
+- **独立目录**：每个 worktree 有独立的工作目录路径，源代码文件完全独立，互不干扰
+- **共享 Git 对象**：`.git` 内部通过 `gitdir` 机制共享对象（`.git/worktrees/<name>/`），节省磁盘空间
+- **隔离性保证**：各 worktree 可同时 `npm install`、`npm run dev`，commit/push 互不冲突
 
 ## Phase 2：生成 OpenSpec 文档
 
