@@ -1,0 +1,28 @@
+{
+  "Web": {
+    "ReadTimeout": "5s",
+    "WriteTimeout": "15m",
+    "IdleTimeout": "120s",
+    "ShutdownTimeout": "20s",
+    "CodeCCBaseUrl": "http://codecc.woa.com",
+    "BkRepoBaseUrl": "http://devnet.bkrepo.woa.com",
+    "BkRepoProject": "bkdevops",
+    "BkRepoRepo": "static",
+    "BkRepoFolder": "http://devnet.bkrepo.woa.com/generic/bkdevops/static/gw/resource/preci/v2/prod"
+  },
+  "BKAuth": {
+    "BaseURL": "http://bkauth-test.woa.com/realms/bk-devops",
+    "ClientID": "bk-preci",
+    "Resource": "service:codecc"
+  },
+  "Log": {
+    "Level": "info"
+  },
+  "Db": {
+    "Timeout": "3s",
+    "InitialMmapSize": "33554432"
+  },
+  "Task": {
+    "MaxIncrementalFileSize": 1000
+  }
+}
