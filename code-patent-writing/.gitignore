@@ -1,0 +1,8 @@
+.claude/settings.local.json
+.vscode
+_patent_*
+*.pyc
+__pycache__
+*.egg-info
+dist/
+build/
