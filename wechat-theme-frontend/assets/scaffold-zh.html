@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WeChat — 连接你关心的人、服务与品牌</title>
+  <!-- No web-font import needed: WeChat theme uses the native system sans-serif stack only -->
+  <style>
+    /* ============================================================
+       1. DESIGN TOKENS — paste full :root block from references/tokens.md
+       ============================================================ */
+    :root {
+      --color-primary:               #07c160;
+      --color-primary-active:        #06ad56;
+      --color-primary-soft:          #e0f7ea;
+      --color-primary-disabled:      #a8e6c2;
+      --color-link:                  #576b95;
+      --color-link-active:           #46567a;
+      --color-accent-red:            #fa5151;
+      --color-accent-amber:          #fa9d3b;
+      --color-ink:                   #1a1a1a;
+      --color-body-strong:           #333333;
+      --color-body-default:          #666666;
+      --color-muted:                 #888888;
+      --color-muted-soft:            #b2b2b2;
+      --color-canvas:                #ffffff;
+      --color-surface-soft:          #f7f7f7;
+      --color-surface-card:          #f5f5f5;
+      --color-surface-strong:        #ececec;
+      --color-surface-dark:          #191919;
+      --color-surface-dark-elevated: #232323;
+      --color-hairline:              #e5e5e5;
+      --color-hairline-soft:         #ededed;
+      --color-on-primary:            #ffffff;
+      --color-on-dark:               #ffffff;
+      --color-on-dark-soft:          #a3a3a3;
+
+      --font-body: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", "Segoe UI", "Microsoft Yahei", Helvetica, Arial, sans-serif;
+      --font-code: ui-monospace, "SFMono-Regular", "Cascadia Code", Consolas, monospace;
+
+      --space-xxs: 4px; --space-xs: 8px; --space-sm: 12px; --space-md: 16px;
+      --space-lg: 24px; --space-xl: 32px; --space-xxl: 48px; --space-section: 80px;
+
+      --radius-xs: 6px; --radius-sm: 8px; --radius-md: 10px; --radius-lg: 16px;
+      --radius-xl: 20px; --radius-pill: 9999px; --radius-full: 9999px;
+
+      --motion-instant: 80ms; --motion-fast: 160ms; --motion-normal: 220ms;
+      --motion-slow: 280ms; --motion-lazy: 360ms;
+      --ease-standard: cubic-bezier(0.25, 0.1, 0.25, 1);
+      --ease-spring:   cubic-bezier(0.34, 1.56, 0.64, 1);
+
+      --reveal-distance: 12px; --reveal-duration: var(--motion-slow);
+      --reveal-ease: var(--ease-standard); --reveal-stagger: 50ms;
+    }
+
+    /* ============================================================
+       2. DARK THEME OVERRIDES — from references/tokens.md
+       ============================================================ */
+    [data-theme="dark"] {
+      --color-canvas: #191919;
+      --color-surface-soft: #202020;
+      --color-surface-card: #232323;
+      --color-surface-strong: #2c2c2c;
+      --color-ink: #ffffff;
+      --color-body-strong: #e5e5e5;
+      --color-body-default: #a3a3a3;
+      --color-muted: #8a8a8a;
+      --color-muted-soft: #666666;
+      --color-link: #7a92c2;
+      --color-primary-soft: rgba(7, 193, 96, 0.16);
+      --color-hairline: rgba(255,255,255,0.09);
+      --color-hairline-soft: rgba(255,255,255,0.05);
+    }
+    [data-theme="dark"] .top-nav { background: #191919; border-bottom-color: rgba(255,255,255,0.09); }
+    [data-theme="dark"] .feature-card,
+    [data-theme="dark"] .news-card,
+    [data-theme="dark"] .category-card { border-color: rgba(255,255,255,0.06); }
+    [data-theme="dark"] .feature-card:hover,
+    [data-theme="dark"] .category-card:hover { background: #2a2a2a; }
+    [data-theme="dark"] .footer { border-top: 1px solid rgba(255,255,255,0.06); }
+
+    /* ============================================================
+       3. BASE RESET
+       ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--color-canvas);
+      color: var(--color-body-default);
+      font-family: var(--font-body);
+      font-size: 15px; line-height: 1.75;
+      word-break: break-all; overflow-wrap: break-word;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      transition: background var(--motion-normal) var(--ease-standard),
+                  color var(--motion-normal) var(--ease-standard);
+    }
+    img, svg { max-width: 100%; display: block; }
+    a { color: inherit; }
+
+    /* ============================================================
+       4. MOTION UTILITIES — from references/motion.md
+       ============================================================ */
+    .reveal {
+      opacity: 0; transform: translateY(var(--reveal-distance));
+      transition: opacity var(--reveal-duration) var(--reveal-ease),
+                  transform var(--reveal-duration) var(--reveal-ease);
+    }
+    .reveal.is-visible { opacity: 1; transform: translateY(0); }
+    .reveal[data-delay="1"] { transition-delay: calc(var(--reveal-stagger) * 1); }
+    .reveal[data-delay="2"] { transition-delay: calc(var(--reveal-stagger) * 2); }
+    .reveal[data-delay="3"] { transition-delay: calc(var(--reveal-stagger) * 3); }
+    .reveal[data-delay="4"] { transition-delay: calc(var(--reveal-stagger) * 4); }
+
+    @keyframes enter-up { from { opacity:0; transform: translateY(12px); } to { opacity:1; transform: translateY(0); } }
+    .hero-band__content > * { animation: enter-up var(--motion-slow) var(--ease-standard) both; }
+    .hero-band__content > *:nth-child(1) { animation-delay: 40ms; }
+    .hero-band__content > *:nth-child(2) { animation-delay: 100ms; }
+    .hero-band__content > *:nth-child(3) { animation-delay: 160ms; }
+    .hero-band__content > *:nth-child(4) { animation-delay: 220ms; }
+    .hero-band__illustration { animation: enter-up var(--motion-lazy) var(--ease-standard) both; animation-delay: 120ms; }
+
+    /* ============================================================
+       5. TYPOGRAPHY CLASSES
+       ============================================================ */
+    .display-xl { font-family: var(--font-body); font-size: 44px; font-weight: 600; line-height: 1.30; color: var(--color-ink); }
+    .display-lg { font-family: var(--font-body); font-size: 34px; font-weight: 600; line-height: 1.32; color: var(--color-ink); }
+    .display-md { font-family: var(--font-body); font-size: 26px; font-weight: 600; line-height: 1.35; color: var(--color-ink); }
+    .display-sm { font-family: var(--font-body); font-size: 21px; font-weight: 600; line-height: 1.40; color: var(--color-ink); }
+    .title-md   { font-family: var(--font-body); font-size: 16px; font-weight: 600; line-height: 1.55; color: var(--color-ink); }
+    .body-md    { font-family: var(--font-body); font-size: 15px; font-weight: 400; line-height: 1.75; color: var(--color-body-default); }
+    .body-sm    { font-family: var(--font-body); font-size: 13px; font-weight: 400; line-height: 1.75; color: var(--color-muted); }
+
+    @media (max-width: 768px) {
+      .display-xl { font-size: 28px; line-height: 1.40; }
+      .display-lg { font-size: 24px; line-height: 1.42; }
+      .display-md { font-size: 21px; line-height: 1.45; }
+      .display-sm { font-size: 18px; line-height: 1.50; }
+    }
+
+    /* ============================================================
+       6. COMPONENT STYLES — from references/components.md
+       ============================================================ */
+    .section-container { max-width: 1200px; margin: 0 auto; padding: 0 var(--space-xl); }
+    @media (max-width: 768px) { .section-container { padding: 0 var(--space-md); } }
+
+    /* Top nav */
+    .top-nav { position: sticky; top: 0; z-index: 100; background: var(--color-canvas);
+      border-bottom: 1px solid var(--color-hairline); height: 60px; display: flex; align-items: center;
+      transition: box-shadow var(--motion-normal) var(--ease-standard); }
+    .top-nav__container { max-width: 1200px; margin: 0 auto; padding: 0 var(--space-xl); width: 100%;
+      display: flex; align-items: center; gap: var(--space-xl); }
+    .top-nav__brand { display: flex; align-items: center; gap: var(--space-xs); text-decoration: none;
+      color: var(--color-ink); font-size: 16px; font-weight: 600; }
+    .top-nav__links { display: flex; gap: var(--space-sm); list-style: none; flex: 1;
+      /* PC default: wrap to a second line if many items — never scroll. */
+      flex-wrap: wrap; }
+    /* Mobile / tablet: single line + edge-faded horizontal scroll. */
+    @media (max-width: 1024px) {
+      .top-nav__links, .tab-bar { flex-wrap: nowrap; overflow-x: auto;
+        scrollbar-width: none; -ms-overflow-style: none; -webkit-overflow-scrolling: touch;
+        -webkit-mask-image: linear-gradient(to right, transparent, black 10px, black calc(100% - 10px), transparent);
+                mask-image: linear-gradient(to right, transparent, black 10px, black calc(100% - 10px), transparent);
+      }
+      .top-nav__links::-webkit-scrollbar, .tab-bar::-webkit-scrollbar { display: none; height: 0; }
+    }
+    /* Drop-in utility for ad-hoc always-scrollable strips (chip filters, etc). */
+    .scroll-fade-x {
+      overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none;
+      -webkit-overflow-scrolling: touch;
+      -webkit-mask-image: linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent);
+              mask-image: linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent);
+    }
+    .scroll-fade-x::-webkit-scrollbar { display: none; height: 0; }
+    @media (max-width: 768px) {
+      .scroll-fade-x {
+        -webkit-mask-image: linear-gradient(to right, transparent, black 10px, black calc(100% - 10px), transparent);
+                mask-image: linear-gradient(to right, transparent, black 10px, black calc(100% - 10px), transparent);
+      }
+    }
+    .nav-link { font-size: 14px; font-weight: 500; color: var(--color-muted); text-decoration: none;
+      padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-sm);
+      transition: color var(--motion-fast) var(--ease-standard), background var(--motion-fast) var(--ease-standard); }
+    .nav-link:hover { color: var(--color-ink); background: var(--color-surface-soft); }
+    .top-nav__actions { display: flex; align-items: center; gap: var(--space-md); }
+
+    /* Theme toggle */
+    .theme-toggle-btn { background: transparent; border: none; cursor: pointer; color: var(--color-muted);
+      padding: 8px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center;
+      transition: color var(--motion-fast) var(--ease-standard), transform var(--motion-instant) var(--ease-standard); }
+    .theme-toggle-btn:hover { color: var(--color-ink); }
+    .theme-toggle-btn:active { transform: scale(0.92); }
+    .theme-icon-sun { display: none; } .theme-icon-moon { display: block; }
+    [data-theme="dark"] .theme-icon-sun { display: block; } [data-theme="dark"] .theme-icon-moon { display: none; }
+
+    /* Buttons */
+    .btn-primary { display: inline-flex; align-items: center; justify-content: center; background: var(--color-primary);
+      color: var(--color-on-primary); font-size: 14px; font-weight: 500; padding: 0 22px; height: 40px;
+      border-radius: var(--radius-pill); border: none; cursor: pointer; text-decoration: none;
+      transition: background var(--motion-fast) var(--ease-standard), transform var(--motion-instant) var(--ease-standard); }
+    .btn-primary:hover { background: var(--color-primary-active); }
+    .btn-primary:active { transform: scale(0.96); }
+    .btn-secondary { display: inline-flex; align-items: center; justify-content: center; background: var(--color-canvas);
+      color: var(--color-ink); font-size: 14px; font-weight: 500; padding: 0 22px; height: 40px;
+      border-radius: var(--radius-pill); border: 1px solid var(--color-hairline); cursor: pointer; text-decoration: none;
+      transition: border-color var(--motion-fast) var(--ease-standard), transform var(--motion-instant) var(--ease-standard); }
+    .btn-secondary:hover { border-color: var(--color-muted-soft); }
+    .btn-secondary:active { transform: scale(0.96); }
+    .btn-text-link { background: transparent; color: var(--color-ink); font-size: 14px; font-weight: 500;
+      border: none; cursor: pointer; text-decoration: none; transition: color var(--motion-fast) var(--ease-standard); }
+    .btn-text-link:hover { color: var(--color-primary); }
+    .text-link { font-size: 15px; color: var(--color-link); text-decoration: none; transition: color var(--motion-fast) var(--ease-standard); }
+    .text-link:hover { color: var(--color-link-active); text-decoration: underline; }
+
+    /* Hero */
+    .hero-band { background: var(--color-canvas); padding: var(--space-section) 0; }
+    .hero-band__container { max-width: 1200px; margin: 0 auto; padding: 0 var(--space-xl);
+      display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-xxl); align-items: center; }
+    .hero-band__content { display: flex; flex-direction: column; gap: var(--space-lg); }
+    .hero-band__actions { display: flex; gap: var(--space-md); flex-wrap: wrap; }
+    .hero-band__illustration { background: var(--color-surface-soft); border-radius: var(--radius-xl);
+      aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center; color: var(--color-muted-soft); }
+    @media (max-width: 768px) {
+      .hero-band__container { grid-template-columns: 1fr; padding: 0 var(--space-md); }
+      .hero-band__illustration { order: 2; }
+      .hero-band { padding: var(--space-xxl) 0; }
+    }
+
+    .badge-tag { display: inline-flex; align-items: center; background: var(--color-primary-soft);
+      color: var(--color-primary-active); font-size: 13px; font-weight: 500; border-radius: var(--radius-pill);
+      padding: 4px 12px; width: fit-content; }
+
+    /* Feature grid + icon chip */
+    .feature-section { background: var(--color-canvas); padding: var(--space-section) 0; }
+    .feature-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-lg); margin-top: var(--space-xxl); }
+    .feature-card { background: var(--color-surface-card); border-radius: var(--radius-lg); padding: var(--space-xl);
+      display: flex; flex-direction: column; gap: var(--space-md);
+      transition: transform var(--motion-normal) var(--ease-standard), background var(--motion-normal) var(--ease-standard); }
+    .feature-card:hover { transform: translateY(-2px); background: var(--color-surface-strong); }
+    .icon-chip { width: 48px; height: 48px; border-radius: var(--radius-xl); background: var(--color-primary-soft);
+      color: var(--color-primary); display: flex; align-items: center; justify-content: center;
+      transition: transform var(--motion-fast) var(--ease-spring); }
+    .feature-card:hover .icon-chip { transform: scale(1.06); }
+    .feature-card__title { font-size: 16px; font-weight: 600; color: var(--color-ink); }
+    .feature-card__body { font-size: 14px; color: var(--color-body-default); }
+    @media (max-width: 1024px) { .feature-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 768px) { .feature-grid { grid-template-columns: 1fr; } }
+
+    /* QR band */
+    .qr-band { background: var(--color-surface-soft); padding: var(--space-section) 0; }
+    .qr-band__inner { display: flex; align-items: center; justify-content: space-between; gap: var(--space-xxl); flex-wrap: wrap; }
+    .qr-band__code { width: 128px; height: 128px; background: var(--color-canvas); border-radius: var(--radius-lg);
+      border: 1px solid var(--color-hairline); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--color-muted-soft); }
+    @media (max-width: 768px) { .qr-band__inner { flex-direction: column; text-align: center; } }
+
+    /* News grid */
+    .news-section { background: var(--color-canvas); padding: var(--space-section) 0; }
+    .news-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-lg); margin-top: var(--space-xxl); }
+    .news-card { background: var(--color-canvas); border: 1px solid var(--color-hairline); border-radius: var(--radius-lg);
+      overflow: hidden; text-decoration: none; display: flex; flex-direction: column;
+      transition: transform var(--motion-normal) var(--ease-standard), box-shadow var(--motion-normal) var(--ease-standard); }
+    .news-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+    .news-card__image { width: 100%; aspect-ratio: 16/9; background: var(--color-surface-soft); }
+    .news-card__body { padding: var(--space-lg); display: flex; flex-direction: column; gap: var(--space-sm); }
+    .news-card__tags { display: flex; gap: var(--space-xs); }
+    .news-card__title { font-size: 16px; font-weight: 600; color: var(--color-ink); line-height: 1.5; }
+    .news-card__date { font-size: 13px; color: var(--color-muted); }
+    .badge-pill { display: inline-flex; align-items: center; background: var(--color-surface-strong);
+      color: var(--color-body-default); font-size: 12px; font-weight: 500; border-radius: var(--radius-pill); padding: 3px 10px; }
+    @media (max-width: 1024px) { .news-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 768px) { .news-grid { grid-template-columns: 1fr; } }
+
+    /* CTA band */
+    .cta-band-green { background: var(--color-primary); border-radius: var(--radius-lg); padding: 56px; }
+    .cta-band-green .display-sm, .cta-band-green .body-md { color: var(--color-on-primary); }
+    .cta-band__inner { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column;
+      gap: var(--space-lg); text-align: center; align-items: center; }
+    .cta-band__actions { display: flex; gap: var(--space-md); flex-wrap: wrap; justify-content: center; }
+    @media (max-width: 768px) { .cta-band-green { padding: var(--space-xxl) var(--space-md); } }
+
+    /* Footer */
+    .footer { background: var(--color-surface-dark); color: var(--color-on-dark-soft); padding: 56px 0; }
+    .footer__container { max-width: 1200px; margin: 0 auto; padding: 0 var(--space-xl);
+      display: flex; flex-direction: column; gap: var(--space-xxl); }
+    .footer__brand { display: flex; align-items: center; gap: var(--space-xs); font-size: 16px; font-weight: 600; color: var(--color-on-dark); }
+    .footer__columns { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-xxl); }
+    .footer__heading { font-size: 12px; font-weight: 600; color: var(--color-on-dark); text-transform: uppercase;
+      letter-spacing: 0.05em; margin-bottom: var(--space-md); }
+    .footer a { font-size: 14px; color: var(--color-on-dark-soft); text-decoration: none; line-height: 2; display: block;
+      transition: color var(--motion-fast) var(--ease-standard); }
+    .footer a:hover { color: var(--color-on-dark); }
+    @media (max-width: 768px) { .footer__columns { grid-template-columns: 1fr 1fr; } }
+  </style>
+</head>
+<body>
+
+  <!-- Top Nav -->
+  <nav class="top-nav">
+    <div class="top-nav__container">
+      <a href="/" class="top-nav__brand" aria-label="WeChat 首页">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <path d="M8.5 3C4.4 3 1 5.8 1 9.3c0 2.1 1.3 4 3.3 5.2l-.7 2.3 2.6-1.4c.7.2 1.5.3 2.3.3h.2c-.1-.4-.2-.8-.2-1.2 0-3.4 3.2-6.1 7.1-6.1.3 0 .6 0 .9.1C15.7 5.4 12.4 3 8.5 3z" fill="#07c160"/>
+          <path d="M15.4 9.9c-3.4 0-6.1 2.4-6.1 5.4s2.7 5.4 6.1 5.4c.7 0 1.3-.1 1.9-.3l2.1 1.1-.6-1.9c1.6-1 2.7-2.6 2.7-4.3 0-3-2.7-5.4-6.1-5.4z" fill="#07c160" opacity="0.55"/>
+        </svg>
+        <span>WeChat</span>
+      </a>
+      <ul class="top-nav__links" role="list">
+        <li><a href="#" class="nav-link">Newsroom</a></li>
+        <li><a href="#" class="nav-link">安全中心</a></li>
+        <li><a href="#" class="nav-link">帮助中心</a></li>
+      </ul>
+      <div class="top-nav__actions">
+        <button class="theme-toggle-btn" data-theme-toggle aria-label="切换主题">
+          <svg class="theme-icon-sun" width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.22 3.22l1.42 1.42M11.36 11.36l1.42 1.42M3.22 12.78l1.42-1.42M11.36 4.64l1.42-1.42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <svg class="theme-icon-moon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M14 10.5A6 6 0 016.5 3a6 6 0 000 10A6 6 0 0014 10.5z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <a href="#" class="btn-primary">立即下载</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ① Hero -->
+  <section class="hero-band">
+    <div class="hero-band__container">
+      <div class="hero-band__content">
+        <div class="badge-tag">10 亿+ 用户在线</div>
+        <h1 class="display-xl">连接你关心的<br>人、服务与品牌</h1>
+        <p class="body-md">WeChat 提供聊天、通话与生活服务，让沟通更简单，让世界更近一步。</p>
+        <div class="hero-band__actions">
+          <a href="#" class="btn-primary">立即下载</a>
+          <a href="#" class="btn-secondary">了解更多</a>
+        </div>
+      </div>
+      <div class="hero-band__illustration">产品插图 / 二维码</div>
+    </div>
+  </section>
+
+  <!-- ② Icon Feature Grid（安全中心风格） -->
+  <section class="feature-section">
+    <div class="section-container">
+      <h2 class="display-lg reveal">安全工具与保障</h2>
+      <div class="feature-grid">
+        <article class="feature-card reveal" data-delay="1">
+          <div class="icon-chip">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2l7 3v6c0 5-3.5 8-7 9-3.5-1-7-4-7-9V5l7-3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+          </div>
+          <h3 class="feature-card__title">账号安全</h3>
+          <p class="feature-card__body">多重验证机制，保护你的账号不被盗用。</p>
+        </article>
+        <article class="feature-card reveal" data-delay="2">
+          <div class="icon-chip">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="9" width="16" height="10" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M7 9V6a4 4 0 018 0v3" stroke="currentColor" stroke-width="1.6"/></svg>
+          </div>
+          <h3 class="feature-card__title">隐私保护</h3>
+          <p class="feature-card__body">端到端加密，让你的对话内容更安心。</p>
+        </article>
+        <article class="feature-card reveal" data-delay="3">
+          <div class="icon-chip">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="1.6"/><path d="M11 7v4l3 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </div>
+          <h3 class="feature-card__title">反诈提醒</h3>
+          <p class="feature-card__body">实时识别风险行为，及时提醒可疑操作。</p>
+        </article>
+        <article class="feature-card reveal" data-delay="4">
+          <div class="icon-chip">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 11h14M11 4v14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </div>
+          <h3 class="feature-card__title">举报与处置</h3>
+          <p class="feature-card__body">便捷的举报入口，快速响应违规行为。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ③ QR 下载 band -->
+  <section class="qr-band">
+    <div class="section-container qr-band__inner">
+      <div>
+        <h2 class="display-md reveal">扫码下载 WeChat</h2>
+        <p class="body-md reveal" data-delay="1">使用手机相机扫描二维码，快速安装。</p>
+      </div>
+      <div class="qr-band__code reveal" data-delay="2">QR</div>
+    </div>
+  </section>
+
+  <!-- ④ Newsroom 列表 -->
+  <section class="news-section">
+    <div class="section-container">
+      <h2 class="display-lg reveal">最新资讯</h2>
+      <div class="news-grid">
+        <a href="#" class="news-card reveal" data-delay="1">
+          <div class="news-card__image"></div>
+          <div class="news-card__body">
+            <div class="news-card__tags"><span class="badge-pill">Innovation</span><span class="badge-pill">Product</span></div>
+            <h3 class="news-card__title">巧妙的拒绝之道：WeChat 全新"忽略"来电功能</h3>
+            <time class="news-card__date">2026年4月1日</time>
+          </div>
+        </a>
+        <a href="#" class="news-card reveal" data-delay="2">
+          <div class="news-card__image"></div>
+          <div class="news-card__body">
+            <div class="news-card__tags"><span class="badge-pill">Feature</span></div>
+            <h3 class="news-card__title">批量撤回照片，让分享更从容</h3>
+            <time class="news-card__date">2026年3月19日</time>
+          </div>
+        </a>
+        <a href="#" class="news-card reveal" data-delay="3">
+          <div class="news-card__image"></div>
+          <div class="news-card__body">
+            <div class="news-card__tags"><span class="badge-pill">Login</span></div>
+            <h3 class="news-card__title">"看一眼"登录，体验更快捷</h3>
+            <time class="news-card__date">2026年3月26日</time>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑤ Green CTA band -->
+  <section style="background: var(--color-canvas); padding: var(--space-section) 0;">
+    <div class="section-container">
+      <div class="cta-band-green reveal">
+        <div class="cta-band__inner">
+          <h2 class="display-sm">开始使用 WeChat</h2>
+          <p class="body-md">连接朋友、家人与你关心的一切。</p>
+          <div class="cta-band__actions">
+            <a href="#" class="btn-secondary">立即下载</a>
+            <a href="#" style="color: rgba(255,255,255,0.85); font-size:14px; font-weight:500; text-decoration:none;">查看功能 →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑥ Footer -->
+  <footer class="footer">
+    <div class="footer__container">
+      <div class="footer__brand">
+        <svg width="20" height="20" viewBox="0 0 22 22" fill="none"><path d="M8.5 3C4.4 3 1 5.8 1 9.3c0 2.1 1.3 4 3.3 5.2l-.7 2.3 2.6-1.4c.7.2 1.5.3 2.3.3h.2c-.1-.4-.2-.8-.2-1.2 0-3.4 3.2-6.1 7.1-6.1.3 0 .6 0 .9.1C15.7 5.4 12.4 3 8.5 3z" fill="#07c160"/></svg>
+        <span>WeChat</span>
+      </div>
+      <div class="footer__columns">
+        <div>
+          <h4 class="footer__heading">产品</h4>
+          <a href="#">Weixin</a>
+          <a href="#">微信支付</a>
+          <a href="#">小程序</a>
+        </div>
+        <div>
+          <h4 class="footer__heading">资源</h4>
+          <a href="#">Newsroom</a>
+          <a href="#">安全中心</a>
+          <a href="#">帮助中心</a>
+        </div>
+        <div>
+          <h4 class="footer__heading">法律</h4>
+          <a href="#">服务条款</a>
+          <a href="#">隐私政策</a>
+        </div>
+        <div>
+          <h4 class="footer__heading">关注我们</h4>
+          <a href="#">Facebook</a>
+          <a href="#">X</a>
+          <a href="#">LinkedIn</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* ── 主题初始化：跟随系统偏好，持久化到 localStorage ── */
+    const html = document.documentElement;
+    (function initTheme() {
+      const saved = localStorage.getItem('wechat-theme');
+      if (saved) {
+        html.setAttribute('data-theme', saved);
+      } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        html.setAttribute('data-theme', 'dark');
+      }
+    })();
+    document.querySelector('[data-theme-toggle]')?.addEventListener('click', () => {
+      const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      if (next === 'light') html.removeAttribute('data-theme');
+      else html.setAttribute('data-theme', 'dark');
+      localStorage.setItem('wechat-theme', next);
+    });
+
+    /* ── 滚动揭示 ── */
+    const observer = new IntersectionObserver(
+      (entries) => entries.forEach((e) => {
+        if (e.isIntersecting) { e.target.classList.add('is-visible'); observer.unobserve(e.target); }
+      }),
+      { threshold: 0.15 }
+    );
+    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+
+    /* ── 导航滚动阴影 ── */
+    const nav = document.querySelector('.top-nav');
+    window.addEventListener('scroll', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      nav.style.boxShadow = window.scrollY > 8
+        ? (isDark ? '0 1px 12px rgba(0,0,0,0.5)' : '0 1px 8px rgba(0,0,0,0.06)')
+        : '';
+    }, { passive: true });
+  </script>
+</body>
+</html>
