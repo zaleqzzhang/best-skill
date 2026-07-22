@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page title</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    /* 1. Paste all CSS tokens from references/tokens.md :root block */
+    /* 2. Paste [data-theme="dark"] overrides from references/tokens.md */
+    /* 3. Base reset */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--color-canvas);
+      color: var(--color-body);
+      font-family: var(--font-body);
+      font-size: 16px; line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      transition: background var(--motion-normal) var(--ease-out),
+                  color     var(--motion-normal) var(--ease-out);
+    }
+    /* 4. Paste motion utilities (reveal classes) from references/motion.md */
+    /* 5. Paste component styles as needed from references/components.md */
+  </style>
+</head>
+<body>
+
+  <!-- Top Nav -->
+  <nav class="top-nav">
+    <div class="top-nav__container">
+      <a href="/" class="top-nav__brand"><!-- logo --></a>
+      <ul class="top-nav__links" role="list"><!-- links --></ul>
+      <div class="top-nav__actions">
+        <!-- Theme Toggle — place before primary CTA -->
+        <button class="theme-toggle-btn" data-theme-toggle aria-label="Toggle theme">
+          <svg class="theme-icon-sun" width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.22 3.22l1.42 1.42M11.36 11.36l1.42 1.42M3.22 12.78l1.42-1.42M11.36 4.64l1.42-1.42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <svg class="theme-icon-moon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M14 10.5A6 6 0 016.5 3a6 6 0 000 10A6 6 0 0014 10.5z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <a href="#" class="btn-text-link">Sign in</a>
+        <a href="#" class="btn-primary">Try Claude</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ① Cream / dark-navy Hero -->
+  <section class="hero-band">...</section>
+
+  <!-- ② Dark / dark-elevated Product Showcase -->
+  <section style="background: var(--color-surface-dark); padding: var(--space-section) 0;">
+    <div class="section-container">...</div>
+  </section>
+
+  <!-- ③ Cream / dark-canvas Features -->
+  <section style="background: var(--color-canvas); padding: var(--space-section) 0;">
+    <div class="section-container">...</div>
+  </section>
+
+  <!-- ④ Coral CTA band (unchanged in both themes) -->
+  <section style="background: var(--color-canvas); padding: var(--space-section) 0;">
+    <div class="section-container">
+      <div class="cta-band-coral reveal">...</div>
+    </div>
+  </section>
+
+  <!-- ⑤ Dark Footer (already dark in both themes) -->
+  <footer class="footer">...</footer>
+
+  <script>
+    /* ── Theme: respect OS pref, persist to localStorage ── */
+    const html = document.documentElement;
+    (function initTheme() {
+      const saved = localStorage.getItem('claude-theme');
+      if (saved) {
+        html.setAttribute('data-theme', saved);
+      } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        html.setAttribute('data-theme', 'dark');
+      }
+    })();
+    document.querySelector('[data-theme-toggle]')?.addEventListener('click', () => {
+      const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      if (next === 'light') html.removeAttribute('data-theme');
+      else html.setAttribute('data-theme', 'dark');
+      localStorage.setItem('claude-theme', next);
+    });
+
+    /* ── Scroll reveal ── */
+    const observer = new IntersectionObserver(
+      (entries) => entries.forEach((e) => {
+        if (e.isIntersecting) { e.target.classList.add('is-visible'); observer.unobserve(e.target); }
+      }),
+      { threshold: 0.15 }
+    );
+    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+
+    /* ── Nav scroll shadow ── */
+    const nav = document.querySelector('.top-nav');
+    window.addEventListener('scroll', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      nav.style.boxShadow = window.scrollY > 10
+        ? (isDark ? '0 1px 16px rgba(0,0,0,0.4)' : '0 1px 12px rgba(20,20,19,0.07)')
+        : '';
+    }, { passive: true });
+  </script>
+</body>
+</html>
